@@ -1,6 +1,7 @@
 import pytest
-from marshmallow import ValidationError
-from uuid import UUID
+import marshmallow as mw
+import uuid
+
 
 from ProntoPlus.tests._cases import *
 
@@ -20,16 +21,16 @@ def test_models_implementations():
 
         for r in results:
             assert isinstance(r, cases_repo['class'])
-            assert isinstance(r.id, UUID)
+            assert isinstance(r.id, uuid.UUID)
 
-        if cases_repo['class'] == cases_generator.CLASSES['user']:
-            assert schema.dump(r).get('password') is None
+            if cases_repo['class'] == cases_generator.CLASSES['user']:
+                assert schema.dump(r).get('password') is None
 
-        if cases_repo['class'] == cases_generator.CLASSES['record']:
-            assert r.id_user == cases_repo['test_user'].id
-            assert r.id_patient == cases_repo['test_patient'].id
+            if cases_repo['class'] == cases_generator.CLASSES['record']:
+                assert r.id_user == cases_repo['test_user'].id
+                assert r.id_patient == cases_repo['test_patient'].id
 
-            assert r.last_modified_date == r.created_date
+                assert r.last_modified_date == r.created_date
 
 
 def test_validations():
@@ -41,5 +42,9 @@ def test_validations():
 
         for test_case in cases_repo['cases']:
             for case in test_case:
-                with pytest.raises(ValidationError) as e_info:
+                with pytest.raises(mw.ValidationError) as e_info:
                     schema.load(case)
+
+
+def test_database_integration():
+    pass

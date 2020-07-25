@@ -1,24 +1,24 @@
-from uuid import uuid4
-from datetime import datetime, timedelta
-from ProntoPlus.Models import *
+import uuid
+import datetime as dt
+import ProntoPlus.Models as models
 
 
 # Input generators
 class Cases:
-    TENANT = uuid4()
+    TENANT = uuid.uuid4()
     SCHEMAS = {
-        'person': PersonSchema,
-        'user': UserSchema,
-        'patient': PatientSchema,
-        'record': RecordSchema,
-        'license': LicenseSchema
+        'person': models.PersonSchema,
+        'user': models.UserSchema,
+        'patient': models.PatientSchema,
+        'record': models.RecordSchema,
+        'license': models.LicenseSchema
     }
     CLASSES = {
-        'person': Person,
-        'user': User,
-        'patient': Patient,
-        'record': Record,
-        'license': License
+        'person': models.Person,
+        'user': models.User,
+        'patient': models.Patient,
+        'record': models.Record,
+        'license': models.License
     }
 
     def __init__(self):
@@ -32,37 +32,37 @@ class Cases:
                     "tenant": self.TENANT,
                     "cpf": "12345678910",
                     "name": "Test User",
-                    "gender": Person.Gender.masculine,
+                    "gender": models.Person.Gender.masculine,
                     "birth_date": '2020-12-10',
                     "address": 'Test Street, 1',
                     "email": "test.email@email.com",
-                    "blood_type": Person.BloodType.ab,
-                    "blood_rh": Person.BloodRH.negative,
-                    "created_date": datetime.now().isoformat()
+                    "blood_type": models.Person.BloodType.ab,
+                    "blood_rh": models.Person.BloodRH.negative,
+                    "created_date": dt.datetime.now().isoformat()
                 },
                 {
                     "tenant": self.TENANT,
                     "cpf": "12345678911",
                     "name": "Test User 2",
-                    "gender": Person.Gender.feminine,
+                    "gender": models.Person.Gender.feminine,
                     "birth_date": '1984-12-01',
                     "address": 'Test Street, 2',
                     "email": "test.email.2@email.com",
-                    "blood_type": Person.BloodType.o,
-                    "blood_rh": Person.BloodRH.undefined,
-                    "created_date": datetime.now().isoformat()
+                    "blood_type": models.Person.BloodType.o,
+                    "blood_rh": models.Person.BloodRH.undefined,
+                    "created_date": dt.datetime.now().isoformat()
                 },
                 {
                     "tenant": self.TENANT,
                     "cpf": "12345678910",
                     "name": "Test User",
-                    "gender": Person.Gender.masculine,
+                    "gender": models.Person.Gender.masculine,
                     "birth_date": '1988-01-01',
                     "address": 'Test Street, 2',
                     "email": "testemail@email.com",
-                    "blood_type": Person.BloodType.undefined,
-                    "blood_rh": Person.BloodRH.undefined,
-                    "created_date": datetime.now().isoformat()
+                    "blood_type": models.Person.BloodType.undefined,
+                    "blood_rh": models.Person.BloodRH.undefined,
+                    "created_date": dt.datetime.now().isoformat()
                 }
             ],
             'schema': self.SCHEMAS['person'],
@@ -70,22 +70,40 @@ class Cases:
         }
 
     def _make_user_test_cases(self):
-        user_test_cases = self._make_person_test_cases()
-        user_test_cases['schema'] = self.SCHEMAS['user']
-        user_test_cases['class'] = self.CLASSES['user']
-
-        for i, case in enumerate(user_test_cases['cases']):
-            if i == 0:
-                case['crm'] = '114991'
-            if i == 2:
-                case['crm'] = '06/143550'
-            else:
-                case['crm'] = ''
-
-            case['username'] = 'user' + str(i)
-            case['password'] = 'password' + str(i)
-
-            user_test_cases['cases'][i] = case
+        user_test_cases = {
+            'schema': self.SCHEMAS['user'],
+            'class': self.CLASSES['user'],
+            'cases': [
+                {
+                    'id': uuid.uuid4(),
+                    'id_person': uuid.uuid4(),
+                    'id_tenant': self.TENANT,
+                    'crm': '',
+                    'username': 'User1',
+                    'password': 'Password',
+                    'created_date': dt.datetime.now().isoformat(),
+                    'last_modified_date': None
+                },
+                {
+                    'id': uuid.uuid4(),
+                    'id_person': uuid.uuid4(),
+                    'id_tenant': self.TENANT,
+                    'crm': '114991',
+                    'username': 'User2',
+                    'password': 'Password2',
+                    'created_date': dt.datetime.now().isoformat(),
+                    'last_modified_date': (dt.datetime.now() + dt.timedelta(days=10)).isoformat()
+                },
+                {
+                    'id': uuid.uuid4(),
+                    'id_person': uuid.uuid4(),
+                    'id_tenant': self.TENANT,
+                    'crm': '06/143550',
+                    'username': 'User3',
+                    'password': 'Password3',
+                    'created_date': dt.datetime.now().isoformat()
+                }
+            ]}
 
         return user_test_cases
 
@@ -115,14 +133,14 @@ class Cases:
                 'id_tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
-                'created_date': datetime.now().isoformat()
+                'created_date': dt.datetime.now().isoformat()
             },
             {
                 'id_user': test_user.id,
                 'id_tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
-                'created_date': datetime(2020, 1, 1, 15, 50, 50).isoformat()
+                'created_date': dt.datetime(2020, 1, 1, 15, 50, 50).isoformat()
             }
         ]
 
@@ -133,18 +151,18 @@ class Cases:
         return {
             'cases': [
                 {
-                    'id': uuid4(),
-                    'tenant': uuid4(),
+                    'id': uuid.uuid4(),
+                    'tenant': uuid.uuid4(),
                     'quota': 10,
-                    'created_date': datetime.now().isoformat()
+                    'created_date': dt.datetime.now().isoformat()
                 },
                 {
-                    'id': uuid4(),
-                    'tenant': uuid4(),
+                    'id': uuid.uuid4(),
+                    'tenant': uuid.uuid4(),
                     'quota': 9,
-                    'created_date': datetime.now().isoformat(),
-                    'expiration_date': (datetime.now() + timedelta(days=1)).isoformat(),
-                    'last_checked_date': datetime.now().isoformat()
+                    'created_date': dt.datetime.now().isoformat(),
+                    'expiration_date': (dt.datetime.now() + dt.timedelta(days=1)).isoformat(),
+                    'last_checked_date': dt.datetime.now().isoformat()
                 }
             ],
             'schema': self.SCHEMAS['license'],
@@ -240,14 +258,14 @@ class BadCases(Cases):
             if i == 0:
                 case['id'] = 'Key1'
             elif i == 1:
-                case['created_date'] = datetime(2020, 20, 1)
+                case['created_date'] = dt.datetime(2020, 20, 1)
             elif i == 2:
-                case['expiration_date'] = datetime(2020, 20, 1, 10, 55).isoformat()
-                case['created_date'] = datetime(2020, 20, 1, 10, 54).isoformat()
+                case['expiration_date'] = dt.datetime(2020, 20, 1, 10, 55).isoformat()
+                case['created_date'] = dt.datetime(2020, 20, 1, 10, 54).isoformat()
             elif i == 3:
                 case['quota'] = -1
             elif i == 4:
-                case['last_checked_date'] = datetime(2020, 20, 1)
+                case['last_checked_date'] = dt.datetime(2020, 20, 1)
 
             bad_license_cases['cases'][i] = case
 

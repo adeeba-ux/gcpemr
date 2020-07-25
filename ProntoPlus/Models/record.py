@@ -1,46 +1,55 @@
-from marshmallow import Schema, fields, post_load, ValidationError, validates_schema
-from uuid import UUID, uuid4
-from datetime import datetime
-from dataclasses import dataclass
+import marshmallow as mw
+import datetime as dt
+import uuid
+import dataclasses as da
+import sqlalchemy as sa
+import sqlalchemy_utils as sau
+import sqlalchemy.orm as orm
+
+import ProntoPlus.Models._db as _db
+import ProntoPlus.Models.base_model as _base
 
 
-@dataclass
-class Record:
-    id_user: UUID
-    id_patient: UUID
-    id_tenant: UUID
-    text: str
-    id: UUID = None
-    created_date: datetime = datetime.now()
-    last_modified_date: datetime = None
+@da.dataclass
+class Record(_base.Base):
+    id_user: uuid.UUID = da.field(default_factory=lambda: None)
+    id_patient: uuid.UUID = da.field(default_factory=lambda: None)
+    text: str = da.field(default_factory=lambda: None)
+    created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
+    last_modified_date: dt.datetime = da.field(default_factory=lambda: None)
 
     def __post_init__(self):
-        if self.id is None:
-            self.id = uuid4()
-
         if self.last_modified_date is None:
             self.last_modified_date = self.created_date
 
 
-class RecordSchema(Schema):
-    @validates_schema
+class RecordSchema(mw.Schema):
+    @mw.validates('last_modified_date')
     def must_be_higher_than_creation(self, data, **kwargs):
-        created_date = data.get('created_date', None)
-        if created_date is None:
-            created_date = datetime.now()
-        last_modified_date = data.get('last_modified_date', None)
+        if data and data < self.created_date:
+            raise mw.ValidationError(f'Last modified date is before creation date')
 
-        if last_modified_date and last_modified_date < created_date:
-            raise ValidationError(f'Last modified date is before creation date')
+    id_user = mw.fields.UUID(required=True, allow_none=False)
+    id_patient = mw.fields.UUID(required=True, allow_none=False)
+    text = mw.fields.Str(required=True, allow_none=False)
+    created_date = mw.fields.DateTime(required=True)
+    last_modified_date = mw.fields.DateTime()
 
-    id_user = fields.UUID()
-    id_patient = fields.UUID()
-    id_tenant = fields.UUID()
-    id = fields.UUID()
-    created_date = fields.DateTime()
-    last_modified_date = fields.DateTime()
-    text = fields.Str()
-
-    @post_load
+    @mw.post_load
     def _make(self, data, **kwargs):
         return Record(**data)
+
+
+recordTable = sa.Table(
+    'records',
+    _db.Model.metadata,
+    sa.Column('id', sau.UUIDType, primary_key=True, unique=True, nullable=False),
+    sa.Column('id_user', sau.UUIDType, sa.ForeignKey('users.id'), nullable=False),
+    sa.Column('id_patient', sau.UUIDType, sa.ForeignKey('patients.id'), nullable=False),
+    sa.Column('id_tenant', sau.UUIDType, sa.ForeignKey('tenants.id'), nullable=False),
+    sa.Column('created_date', sa.DateTime, nullable=False),
+    sa.Column('last_modified_date', sa.DateTime),
+    sa.Column('text', sa.Text)
+)
+
+orm.mapper(Record, recordTable)

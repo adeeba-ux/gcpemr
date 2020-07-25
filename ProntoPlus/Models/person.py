@@ -1,84 +1,81 @@
-from dataclasses import dataclass
-from uuid import UUID, uuid4
-from datetime import date, datetime
-from marshmallow import Schema, fields, post_load, ValidationError, validates_schema
-from enum import Enum, unique
+import dataclasses as da
+import uuid
+import datetime as dt
+import enum
+import marshmallow as mw
+import ProntoPlus.Models._custom_fields as _custom_fields
+import ProntoPlus.Models.base_model as _base
+import abc
 
-from ProntoPlus.Models._custom_fields import CPF, EnumField
-
-
-
-@dataclass
-class Person:
+@da.dataclass
+class Person(_base.Base, abc.ABC):
     """
-    Classe base para objetos que representam pessoas.
+    Base class for objects that represent a Person.
     """
 
-    @unique
-    class Gender(Enum):
+    @enum.unique
+    class Gender(enum.Enum):
         undefined = -1
         masculine = 0
         feminine = 1
         other = 2
 
-    @unique
-    class BloodType(Enum):
+    @enum.unique
+    class BloodType(enum.Enum):
         undefined = -1
         o = 0
         a = 1
         b = 2
         ab = 3
 
-    @unique
-    class BloodRH(Enum):
+    @enum.unique
+    class BloodRH(enum.Enum):
         undefined = -1
         negative = 0
         positive = 1
 
-    tenant: UUID
-    cpf: str
-    name: str
-    gender: Gender
-    created_date: datetime = datetime.now()
-    id: UUID = None
-    birth_date: date = None
-    address: str = None
-    email: str = None
-    blood_type: BloodType = BloodType(-1)
-    blood_rh: BloodRH = BloodRH(-1)
-    last_modified_date: datetime = None
+    cpf: str = da.field(default_factory=lambda: None)
+    name: str = da.field(default_factory=lambda: '')
+    gender: Gender = da.field(default_factory=lambda: Person.Gender(-1))
+    created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
+    birth_date: dt.date = da.field(default_factory=lambda: None)
+    address: str = da.field(default_factory=lambda: None)
+    email: str = da.field(default_factory=lambda: None)
+    phone: str = da.field(default_factory=lambda: None)
+    blood_type: BloodType = da.field(default_factory=lambda: Person.BloodType(-1))
+    blood_rh: BloodRH = da.field(default_factory=lambda: Person.BloodRH(-1))
+    last_modified_date: dt.datetime = da.field(default_factory=lambda: None)
 
     def __post_init__(self):
         if self.id is None:
-            self.id = uuid4()
+            self.id = uuid.uuid4()
         if self.last_modified_date is None:
             self.last_modified_date = self.created_date
 
 
-class PersonSchema(Schema):
-    @validates_schema
+class PersonSchema(mw.Schema):
+    @mw.validates_schema
     def must_be_higher_than_creation(self, data, **kwargs):
         created_date = data.get('created_date', None)
         if created_date is None:
-            created_date = datetime.now()
+            created_date = dt.datetime.now()
         last_modified_date = data.get('last_modified_date', None)
 
         if last_modified_date and last_modified_date < created_date:
-            raise ValidationError(f'Last modified date is before creation date')
+            raise mw.ValidationError(f'Last modified date is before creation date')
 
-    id = fields.UUID()
-    tenant = fields.UUID()
-    name = fields.Str()
-    cpf = CPF()
-    birth_date = fields.Date()
-    gender = EnumField(Person.Gender)
-    address = fields.Str()
-    email = fields.Email()
-    blood_type = EnumField(Person.BloodType)
-    blood_rh = EnumField(Person.BloodRH)
-    created_date = fields.DateTime()
-    last_modified_date = fields.DateTime()
+    name = mw.fields.Str(required=True, allow_none=False)
+    cpf = _custom_fields.CPF(required=True, allow_none=False)
+    birth_date = mw.fields.Date()
+    gender = _custom_fields.EnumField(Person.Gender)
+    address = mw.fields.Str()
+    email = mw.fields.Email()
+    phone = mw.fields.Str()
+    blood_type = _custom_fields.EnumField(Person.BloodType)
+    blood_rh = _custom_fields.EnumField(Person.BloodRH)
+    created_date = mw.fields.DateTime(required=True)
+    last_modified_date = mw.fields.DateTime()
 
-    @post_load
+    @mw.post_load
     def _make(self, data, **kwargs):
         return Person(**data)
