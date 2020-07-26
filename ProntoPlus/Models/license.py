@@ -16,7 +16,7 @@ class License(_base.Base):
             self.last_checked_date = self.created_date
 
 
-class LicenseSchema(mw.Schema):
+class LicenseSchema(_base.BaseSchema):
     @mw.validates("quota")
     def must_be_at_least_one(self, data):
         if isinstance(data, int) and data < 1:

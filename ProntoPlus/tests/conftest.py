@@ -18,23 +18,6 @@ def session_mocker():
 
 
 @pytest.fixture
-def controllers(session_mocker):
-    def patient_controller():
-        controller = ctrls.PatientCtrl(session_mocker)
-        return controller
-
-    def user_controller():
-        controller = ctrls.UserCtrl(session_mocker)
-        return controller
-
-    def record_controller():
-        controller = ctrls.RecordCtrl(session_mocker)
-        return controller
-
-    return [patient_controller(), user_controller(), record_controller()]
-
-
-@pytest.fixture
 def case_generator():
     generator = Cases()
 
@@ -46,5 +29,26 @@ def bad_case_generator():
     generator = BadCases()
 
     return generator
+
+
+@pytest.fixture
+def patient_controller(session_mocker):
+    controller = ctrls.PatientCtrl(session_mocker)
+    return controller
+
+
+@pytest.fixture
+def user_controller(session_mocker):
+    controller = ctrls.UserCtrl(session_mocker)
+    return controller
+
+
+@pytest.fixture
+def record_controller(session_mocker):
+    controller = ctrls.RecordCtrl(session_mocker)
+    return controller
+
+
+
 
 

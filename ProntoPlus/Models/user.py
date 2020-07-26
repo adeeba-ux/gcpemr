@@ -8,14 +8,16 @@ import datetime as dt
 import passlib.hash as plib
 
 import ProntoPlus.Models.db as _db
+import ProntoPlus.Models.base as _base
+
 
 @da.dataclass
-class User:
-    id_tenant: uuid.UUID
-    id: uuid.UUID = da.field(default_factory=lambda: uuid.uuid4())
+class User(_base.Base):
+    id_person: uuid.UUID = da.field(default_factory=lambda: None)
     crm: str = da.field(default_factory=lambda: None)
     username: str = da.field(default_factory=lambda: None)
     password: str = da.field(default_factory=lambda: None)
+    _password: str = da.field(init=False, repr=False)
     created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
     last_modified_date: dt.datetime = da.field(default_factory=lambda: None)
 
@@ -23,10 +25,16 @@ class User:
         if self.last_modified_date is None:
             self.last_modified_date = self.created_date
 
-        self.password = plib.bcrypt.encrypt(self.password)
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value):
+        self._password = plib.bcrypt.hash(value)
 
 
-class UserSchema(mw.Schema):
+class UserSchema(_base.BaseSchema):
     @mw.validates_schema
     def _must_not_be_blank(self, data, **kwargs):
         username = data.get('username', None)
@@ -49,6 +57,7 @@ class UserSchema(mw.Schema):
             raise mw.ValidationError(f'Last modified date is before creation date')
 
     crm = mw.fields.Str(allow_none=False)
+    id_person = mw.fields.UUID(allow_none=True)
     username = mw.fields.Str(required=True, allow_none=False)
     password = mw.fields.Str(load_only=True, required=True, allow_none=False)
     created_date = mw.fields.DateTime(required=True)
@@ -63,6 +72,8 @@ userTable = sa.Table(
     "users",
     _db.metadata,
     sa.Column('id', sau.UUIDType, primary_key=True, unique=True, nullable=False),
+    sa.Column('id_person', sau.UUIDType),
+    sa.Column('tenant', sau.UUIDType),
     sa.Column('crm', sa.String),
     sa.Column('username', sa.String, nullable=False),
     sa.Column('password', sa.String, nullable=False),
@@ -70,4 +81,6 @@ userTable = sa.Table(
     sa.Column('last_modified_date', sa.DateTime)
 )
 
-orm.mapper(User, userTable)
+orm.mapper(User, userTable, properties={
+    'password': orm.synonym('_password', map_column=True)
+})

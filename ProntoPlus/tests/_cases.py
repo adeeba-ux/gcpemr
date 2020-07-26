@@ -78,7 +78,7 @@ class Cases:
                 {
                     'id': uuid.uuid4(),
                     'id_person': uuid.uuid4(),
-                    'id_tenant': self.TENANT,
+                    'tenant': self.TENANT,
                     'crm': '',
                     'username': 'User1',
                     'password': 'Password',
@@ -88,7 +88,7 @@ class Cases:
                 {
                     'id': uuid.uuid4(),
                     'id_person': uuid.uuid4(),
-                    'id_tenant': self.TENANT,
+                    'tenant': self.TENANT,
                     'crm': '114991',
                     'username': 'User2',
                     'password': 'Password2',
@@ -98,7 +98,7 @@ class Cases:
                 {
                     'id': uuid.uuid4(),
                     'id_person': uuid.uuid4(),
-                    'id_tenant': self.TENANT,
+                    'tenant': self.TENANT,
                     'crm': '06/143550',
                     'username': 'User3',
                     'password': 'Password3',
@@ -131,14 +131,14 @@ class Cases:
         record_cases = [
             {
                 'id_user': test_user.id,
-                'id_tenant': self.TENANT,
+                'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
                 'created_date': dt.datetime.now().isoformat()
             },
             {
                 'id_user': test_user.id,
-                'id_tenant': self.TENANT,
+                'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
                 'created_date': dt.datetime(2020, 1, 1, 15, 50, 50).isoformat()

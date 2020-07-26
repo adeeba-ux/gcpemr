@@ -15,7 +15,7 @@ class BaseCtrl(abc.ABC):
     def get_all(self):
         return self._session.query(self._CTRLCLASS)
 
-    def get_one(self, obj_id: t.Union[uuid.UUID, t.List[uuid.UUID]] = None,
+    def get(self, obj_id: t.Union[uuid.UUID, t.List[uuid.UUID]] = None,
             many: bool = False) -> _CTRLTYPE:
 
         if many:
