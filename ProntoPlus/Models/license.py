@@ -1,7 +1,7 @@
 import marshmallow as mw
 import dataclasses as da
 import datetime as dt
-import ProntoPlus.Models.base_model as _base
+import ProntoPlus.Models.base as _base
 
 
 @da.dataclass()

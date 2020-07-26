@@ -6,8 +6,8 @@ import sqlalchemy as sa
 import sqlalchemy_utils as sau
 import sqlalchemy.orm as orm
 
-import ProntoPlus.Models._db as _db
-import ProntoPlus.Models.base_model as _base
+import ProntoPlus.Models.db as _db
+import ProntoPlus.Models.base as _base
 
 
 @da.dataclass
@@ -42,11 +42,11 @@ class RecordSchema(mw.Schema):
 
 recordTable = sa.Table(
     'records',
-    _db.Model.metadata,
+    _db.metadata,
     sa.Column('id', sau.UUIDType, primary_key=True, unique=True, nullable=False),
     sa.Column('id_user', sau.UUIDType, sa.ForeignKey('users.id'), nullable=False),
     sa.Column('id_patient', sau.UUIDType, sa.ForeignKey('patients.id'), nullable=False),
-    sa.Column('id_tenant', sau.UUIDType, sa.ForeignKey('tenants.id'), nullable=False),
+    sa.Column('id_tenant', sau.UUIDType, nullable=False),
     sa.Column('created_date', sa.DateTime, nullable=False),
     sa.Column('last_modified_date', sa.DateTime),
     sa.Column('text', sa.Text)

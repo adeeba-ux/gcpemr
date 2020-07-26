@@ -2,6 +2,7 @@ import uuid
 import datetime as dt
 import ProntoPlus.Models as models
 
+# TODO: Make this smarter
 
 # Input generators
 class Cases:
@@ -22,10 +23,10 @@ class Cases:
     }
 
     def __init__(self):
-        self.test_cases = [self._make_person_test_cases, self._make_user_test_cases, self._make_patient_test_cases,
-                           self._make_record_test_cases, self._make_license_test_cases]
+        self.test_cases = [self.make_person_test_cases, self.make_user_test_cases, self.make_patient_test_cases,
+                           self.make_record_test_cases, self.make_license_test_cases]
 
-    def _make_person_test_cases(self):
+    def make_person_test_cases(self):
         return {
             'cases': [
                 {
@@ -69,7 +70,7 @@ class Cases:
             'class': self.CLASSES['person']
         }
 
-    def _make_user_test_cases(self):
+    def make_user_test_cases(self):
         user_test_cases = {
             'schema': self.SCHEMAS['user'],
             'class': self.CLASSES['user'],
@@ -107,25 +108,25 @@ class Cases:
 
         return user_test_cases
 
-    def _make_patient_test_cases(self):
-        patient_test_cases = self._make_person_test_cases()
+    def make_patient_test_cases(self):
+        patient_test_cases = self.make_person_test_cases()
         patient_test_cases['schema'] = self.SCHEMAS['patient']
 
         return patient_test_cases
 
-    def _make_test_user(self):
-        user_case = self._make_user_test_cases()
+    def make_test_user(self):
+        user_case = self.make_user_test_cases()
         test_user = user_case['schema']().load(user_case['cases'][0])
         return test_user
 
-    def _make_test_patient(self):
-        patient_case = self._make_patient_test_cases()
+    def make_test_patient(self):
+        patient_case = self.make_patient_test_cases()
         test_patient = patient_case['schema']().load(patient_case['cases'][0])
         return test_patient
 
-    def _make_record_test_cases(self):
-        test_user = self._make_test_user()
-        test_patient = self._make_test_patient()
+    def make_record_test_cases(self):
+        test_user = self.make_test_user()
+        test_patient = self.make_test_patient()
 
         record_cases = [
             {
@@ -147,7 +148,7 @@ class Cases:
         return {'cases': record_cases, 'schema': self.SCHEMAS['record'], 'class': self.CLASSES['record'],
                 'test_user': test_user, 'test_patient': test_patient}
 
-    def _make_license_test_cases(self):
+    def make_license_test_cases(self):
         return {
             'cases': [
                 {
@@ -173,13 +174,13 @@ class Cases:
 class BadCases(Cases):
 
     def __init__(self):
-        self.test_cases = [self._make_bad_person_test_cases, self._make_bad_user_test_cases,
-                           self._make_bad_patient_test_cases, self._make_bad_record_test_cases,
-                           self._make_bad_license_test_cases]
+        self.test_cases = [self.make_bad_person_test_cases, self.make_bad_user_test_cases,
+                           self.make_bad_patient_test_cases, self.make_bad_record_test_cases,
+                           self.make_bad_license_test_cases]
 
-    def _make_bad_person_test_cases(self):
-        bad_test_cases = self._make_person_test_cases()
-        bad_test_cases2 = self._make_person_test_cases()
+    def make_bad_person_test_cases(self):
+        bad_test_cases = self.make_person_test_cases()
+        bad_test_cases2 = self.make_person_test_cases()
 
         for i, case in enumerate(bad_test_cases['cases']):
             if i == 0:
@@ -214,8 +215,8 @@ class BadCases(Cases):
             'class': self.CLASSES['person']
         }
 
-    def _make_bad_user_test_cases(self):
-        bad_user_cases = self._make_user_test_cases()
+    def make_bad_user_test_cases(self):
+        bad_user_cases = self.make_user_test_cases()
 
         for i, case in enumerate(bad_user_cases['cases']):
             if i == 0:
@@ -227,15 +228,15 @@ class BadCases(Cases):
 
         return bad_user_cases
 
-    def _make_bad_patient_test_cases(self):
-        bad_test_cases = self._make_bad_person_test_cases()
+    def make_bad_patient_test_cases(self):
+        bad_test_cases = self.make_bad_person_test_cases()
         bad_test_cases['schema'] = self.SCHEMAS['patient']
         bad_test_cases['class'] = self.CLASSES['patient']
 
         return bad_test_cases
 
-    def _make_bad_record_test_cases(self):
-        bad_record_cases = self._make_record_test_cases()
+    def make_bad_record_test_cases(self):
+        bad_record_cases = self.make_record_test_cases()
         bad_record_cases['cases'].append(bad_record_cases['cases'][0].copy())
 
         for i, case in enumerate(bad_record_cases['cases']):
@@ -250,8 +251,8 @@ class BadCases(Cases):
         return {'cases': bad_record_cases['cases'], 'schema': bad_record_cases['schema'],
                 'class': self.CLASSES['record']}
 
-    def _make_bad_license_test_cases(self):
-        bad_license_cases = self._make_license_test_cases()
+    def make_bad_license_test_cases(self):
+        bad_license_cases = self.make_license_test_cases()
         bad_license_cases['cases'] += [bad_license_cases['cases'][0].copy()] * 3
 
         for i, case in enumerate(bad_license_cases['cases']):

@@ -4,7 +4,7 @@ import datetime as dt
 import enum
 import marshmallow as mw
 import ProntoPlus.Models._custom_fields as _custom_fields
-import ProntoPlus.Models.base_model as _base
+import ProntoPlus.Models.base as _base
 import abc
 
 @da.dataclass
@@ -53,7 +53,7 @@ class Person(_base.Base, abc.ABC):
             self.last_modified_date = self.created_date
 
 
-class PersonSchema(mw.Schema):
+class PersonSchema(_base.BaseSchema):
     @mw.validates_schema
     def must_be_higher_than_creation(self, data, **kwargs):
         created_date = data.get('created_date', None)

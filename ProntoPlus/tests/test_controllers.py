@@ -1,27 +1,31 @@
 import pytest
-from ProntoPlus.Controllers import *
-from ProntoPlus.tests._cases import *
 
 
-def test_patientctrl_implementation():
-    test_controller = PatientCtrl(test_mode=True)
-    test_generator = Cases()
-    cases = test_generator._make_patient_test_cases()
-    schema = cases['schema']
-    users = schema.load(cases['cases'], many=True)
+def test_patient_ctrl_implementation(patient_controller, case_generator):
+    cases_repo = case_generator.make_patient_test_cases()
+    schema = cases_repo['schema']()
+    patients = schema.load(cases_repo['cases'], many=True)
 
-    test_controller.add_patient(users, many=True)
-    test_controller.get_patient(users[0].id)
-    ids = []
-    for u in users:
-        ids.appent(u.id)
+    # add many
+    assert patient_controller.add(patients, many=True) is True
 
-    test_controller.get_patient(ids, many=True)
+    # get all
+    all_patients = patient_controller.get_all().all()
+    assert len(all_patients) == len(patients)
 
-    users[0].cpf = '12345678912'
+    # update one
+    old_cpf = patients[0].cpf
+    patients[0].cpf = '12345678913'
+    assert patient_controller.add(patients[0]) is True
 
-    test_controller.update_patient(users[0])
+    # get one
+    get_patient = patient_controller.get_one(patients[0].id).all()
+    assert get_patient[0].id == patients[0].id
+    assert get_patient[0].cpf != old_cpf
 
-    test_controller.delete_patient(users[1])
-    test_controller.get_patient(users[1].id)
+
+
+
+
+
 

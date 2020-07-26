@@ -42,9 +42,5 @@ def test_validations():
 
         for test_case in cases_repo['cases']:
             for case in test_case:
-                with pytest.raises(mw.ValidationError) as e_info:
+                with pytest.raises(mw.ValidationError) as e:
                     schema.load(case)
-
-
-def test_database_integration():
-    pass

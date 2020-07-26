@@ -1,4 +1,3 @@
-import ProntoPlus.Models._db as db
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 import sqlalchemy_utils as sau
@@ -8,12 +7,12 @@ import uuid
 import datetime as dt
 import passlib.hash as plib
 
+import ProntoPlus.Models.db as _db
 
 @da.dataclass
 class User:
     id_tenant: uuid.UUID
     id: uuid.UUID = da.field(default_factory=lambda: uuid.uuid4())
-    id_person: uuid.UUID = da.field(default_factory=lambda: uuid.uuid4())
     crm: str = da.field(default_factory=lambda: None)
     username: str = da.field(default_factory=lambda: None)
     password: str = da.field(default_factory=lambda: None)
@@ -49,7 +48,6 @@ class UserSchema(mw.Schema):
         if last_modified_date and last_modified_date < created_date:
             raise mw.ValidationError(f'Last modified date is before creation date')
 
-    id_person = mw.fields.UUID()
     crm = mw.fields.Str(allow_none=False)
     username = mw.fields.Str(required=True, allow_none=False)
     password = mw.fields.Str(load_only=True, required=True, allow_none=False)
@@ -63,9 +61,8 @@ class UserSchema(mw.Schema):
 
 userTable = sa.Table(
     "users",
-    db.Model.metadata,
+    _db.metadata,
     sa.Column('id', sau.UUIDType, primary_key=True, unique=True, nullable=False),
-    sa.Column('id_person', sau.UUIDType, sa.ForeignKey('people.id')),
     sa.Column('crm', sa.String),
     sa.Column('username', sa.String, nullable=False),
     sa.Column('password', sa.String, nullable=False),

@@ -1,5 +1,5 @@
 import ProntoPlus.Models as models
-import ProntoPlus.Models._db as db
+import ProntoPlus.Models.db as _db
 import marshmallow as mw
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
@@ -20,7 +20,7 @@ class PatientSchema(models.PersonSchema):
 
 patientTable = sa.Table(
     "patients",
-    db.Model.metadata,
+    _db.metadata,
     sa.Column('id', sau.UUIDType, primary_key=True, unique=True, nullable=False),
     sa.Column('tenant', sau.UUIDType, nullable=False),
     sa.Column('name', sa.String, nullable=False),
