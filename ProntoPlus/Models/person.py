@@ -73,8 +73,8 @@ class PersonSchema(_base.BaseSchema):
     phone = mw.fields.Str()
     blood_type = _custom_fields.EnumField(Person.BloodType)
     blood_rh = _custom_fields.EnumField(Person.BloodRH)
-    created_date = mw.fields.DateTime(required=True)
-    last_modified_date = mw.fields.DateTime()
+    created_date = mw.fields.DateTime(required=True, format='%d-%m-%Y %H:%M:%S')
+    last_modified_date = mw.fields.DateTime(format='%d-%m-%Y %H:%M:%S')
 
     @mw.post_load
     def _make(self, data, **kwargs):

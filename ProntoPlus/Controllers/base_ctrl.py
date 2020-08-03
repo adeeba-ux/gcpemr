@@ -3,17 +3,19 @@ import uuid
 import typing as t
 import sqlalchemy.orm as orm
 import abc
+import marshmallow as mw
 
 
 class BaseCtrl(abc.ABC):
-    _CTRLCLASS: _base.Base = _base.Base
-    _CTRLTYPE = t.Union[_CTRLCLASS, t.List[_CTRLCLASS]]
+    CTRLCLASS: _base.Base = _base.Base
+    _CTRLTYPE = t.Union[CTRLCLASS, t.List[CTRLCLASS]]
+    _CTRLSCHEMA = mw.Schema = _base.BaseSchema()
 
     def __init__(self, session: orm.Session) -> None:
         self._session = session
 
     def get_all(self):
-        return self._session.query(self._CTRLCLASS)
+        return self._session.query(self.CTRLCLASS)
 
     def get(self, obj_id: t.Union[uuid.UUID, t.List[uuid.UUID]] = None,
             many: bool = False) -> _CTRLTYPE:
@@ -21,9 +23,9 @@ class BaseCtrl(abc.ABC):
         if many:
             if not isinstance(obj_id, list):
                 obj_id = [obj_id]
-            result = self._session.query(self._CTRLCLASS).filter(self._CTRLCLASS.id.in_(obj_id))
+            result = self._session.query(self.CTRLCLASS).filter(self.CTRLCLASS.id.in_(obj_id))
         else:
-            result = self._session.query(self._CTRLCLASS).filter(self._CTRLCLASS.id == obj_id)
+            result = self._session.query(self.CTRLCLASS).filter(self.CTRLCLASS.id == obj_id)
 
         return result
 
@@ -50,14 +52,24 @@ class BaseCtrl(abc.ABC):
                 obj = [obj]
             try:
                 for o in obj:
-                    self._session.query(obj).filter(self._CTRLCLASS.id == o.id).delete()
+                    self._session.query(obj).filter(self.CTRLCLASS.id == o.id).delete()
             except Exception as e:
                 return [False, e]
         else:
             try:
-                self._session.query(obj).filter(self._CTRLCLASS.id == obj.id).delete()
+                self._session.query(obj).filter(self.CTRLCLASS.id == obj.id).delete()
             except Exception as e:
                 return [False, e]
 
         self._session.commit()
         return True
+
+    def dump(self, obj, **kwargs):
+        return self._CTRLSCHEMA.dump(obj=obj, **kwargs)
+
+    def load(self, data, **kwargs):
+        return self._CTRLSCHEMA.load(data=data, **kwargs)
+
+    def presentation(self):
+        return self.CTRLCLASS.presentation
+

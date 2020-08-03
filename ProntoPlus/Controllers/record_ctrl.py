@@ -1,10 +1,11 @@
 import ProntoPlus.Controllers.base_ctrl as _base
-import ProntoPlus.Models as models
+import ProntoPlus.Models as Models
 import typing as t
 
 
 class RecordCtrl(_base.BaseCtrl):
-    _CTRLCLASS = models.Record
-    _CTRLTYPE = t.Union[_CTRLCLASS, t.List[_CTRLCLASS]]
+    CTRLCLASS = Models.Record
+    _CTRLTYPE = t.Union[CTRLCLASS, t.List[CTRLCLASS]]
+    _CTRLSCHEMA = Models.RecordSchema()
 
 
