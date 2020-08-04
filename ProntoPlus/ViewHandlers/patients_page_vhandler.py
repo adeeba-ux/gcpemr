@@ -15,13 +15,15 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         self.setupUi(self)
 
         self.parent = parent
-        self.controller = Ctrls.init_patient_ctrl()
-        self.presentation_fields = self.controller.presentation()
-        self.cls = self.controller.CTRLCLASS
+        self.patient_ctrl = Ctrls.init_patient_ctrl()
+        self.record_ctrl = Ctrls.init_record_ctrl()
+        self.presentation_fields = self.patient_ctrl.presentation()
+        self.cls = self.patient_ctrl.CTRLCLASS
         self._current_patients_cache = []
 
         self.show_table()
         self.setup_buttons_and_menu()
+        self.writer = vHandler.RecordWriterVHandler()
 
     def setup_buttons_and_menu(self):
         self.patient_search_btn.clicked.connect(self._search)
@@ -29,7 +31,7 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         self.patient_edit_btn.clicked.connect(self._add_patient_with_payload)
         self.patient_record_add_btn.clicked.connect(self._open_record)
 
-        self.patient_table.doubleClicked.connect(self._add_patient_with_payload)
+        self.patient_table.doubleClicked.connect(self._open_record)
         self.patient_table.customContextMenuRequested.connect(self.setup_table_context_menu)
         self.patient_table.itemSelectionChanged.connect(self.toggle_menu_buttons)
         # self.patient_table.isItemSelected.connect(self.toggle_menu_buttons)
@@ -75,18 +77,18 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
 
         self.patient_table.resizeColumnsToContents()
 
-    def _get_current_row_data(self):
+    def _get_current_patient(self):
         return self._current_patients_cache[self.patient_table.currentRow()]
 
     def _search_patients(self, query_filter: str = ''):
         if not query_filter:
-            patients_to_dump = self.controller.get_all().all()
+            patients_to_dump = self.patient_ctrl.get_all().all()
         else:
-            patients_to_dump = self.controller.get_all().filter(sa.or_(
+            patients_to_dump = self.patient_ctrl.get_all().filter(sa.or_(
                 self.cls.name.like('%' + str(query_filter) + '%'),
                 self.cls.cpf.like('%' + str(query_filter) + '%')
             )).all()
-        rows = self.controller.dump(patients_to_dump, many=True)
+        rows = self.patient_ctrl.dump(patients_to_dump, many=True)
 
         self._current_patients_cache = rows
         return rows
@@ -96,52 +98,9 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         self.parent.load_page(page)
 
     def _add_patient_with_payload(self):
-        data = self._get_current_row_data()
-        page = vHandler.patients_form_page_vhandler.PatientFormPageVHandler(self.parent)
-
-        try:
-            phone_parts = data.get('phone', ', ').split(', ')
-        except AttributeError:
-            phone_parts = ['', '']
-        phones = []
-        for i in range(0, 2):
-            try:
-                phones.append(phone_parts[i])
-            except IndexError:
-                phones.append('')
-        try:
-            birth_date = data.get('birth_date').split('-')
-            birth_date = [int(n) for n in birth_date]
-        except AttributeError:
-            birth_date = [2000, 1, 1]
-
-        page.name_input.setText(data.get('name'))
-        page.cpf_input.setText(data.get('cpf'))
-        page.rg_input.setText(data.get('rg'))
-        page.birth_date_input.setDate(qCore.QDate(y=birth_date[0], m=birth_date[1], d=birth_date[2]))
-        page.email_input.setText(data.get('email'))
-        page.gender_input.setCurrentIndex(int(data.get('gender')) + 1)
-        page.phone1_input.setText(phones[0])
-        page.phone2_input.setText(phones[1])
-
-        address_parts = data.get('address').split(', ')
-        address = []
-        for i in range(0, 7):
-            try:
-                address.append(address_parts[i])
-            except IndexError:
-                address.append('')
-
-        page.address_input.setText(address[0])
-        page.address_nbr_input.setText(address[1])
-        page.complement_input.setText(address[2])
-        page.neighb_input.setText(address[3])
-        page.city_input.setText(address[4])
-        page.estate_input.setText(address[5])
-        page.zipcode_input.setText(address[6])
-
-        page._current_patient_cache = data
-
+        data = self.patient_ctrl.load(self._get_current_patient())
+        page = vHandler.patients_form_page_vhandler.PatientFormPageVHandler(self.parent, data)
+        page.setup_patient_data()
         self.parent.load_page(page)
 
     def _search(self):
@@ -150,5 +109,9 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         self.show_table(data)
 
     def _open_record(self):
-        self.writer = vHandler.RecordWriterVHandler()
+        data = self._get_current_patient()
+        data['record'] = self.record_ctrl.get_from_patient(data['id'], data['tenant'])
+        self.writer.patient_data = data
+        self.writer.setup_patient_data()
+        self.writer.show()
 

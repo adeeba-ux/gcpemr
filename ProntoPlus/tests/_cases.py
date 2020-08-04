@@ -34,7 +34,7 @@ class Cases:
                     "cpf": "12345678910",
                     "name": "Test User",
                     "gender": Models.Person.Gender.masculine,
-                    "birth_date": '2020-12-10',
+                    "birth_date": '2020-01-10',
                     "address": 'Test Street, 1',
                     "email": "test.email@email.com",
                     "phone": "2127629953",

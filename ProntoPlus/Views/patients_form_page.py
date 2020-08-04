@@ -37,33 +37,6 @@ class Ui_patients_form_page(object):
 
         self.container_general_grid.addWidget(self.cpf_input, 4, 1, 1, 1)
 
-        self.rg_input = QLineEdit(patients_form_page)
-        self.rg_input.setObjectName(u"rg_input")
-
-        self.container_general_grid.addWidget(self.rg_input, 4, 3, 1, 1)
-
-        self.email_input = QLineEdit(patients_form_page)
-        self.email_input.setObjectName(u"email_input")
-
-        self.container_general_grid.addWidget(self.email_input, 3, 1, 1, 1)
-
-        self.rg_lbl = QLabel(patients_form_page)
-        self.rg_lbl.setObjectName(u"rg_lbl")
-        self.rg_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.container_general_grid.addWidget(self.rg_lbl, 4, 2, 1, 1)
-
-        self.name_input = QLineEdit(patients_form_page)
-        self.name_input.setObjectName(u"name_input")
-
-        self.container_general_grid.addWidget(self.name_input, 0, 1, 1, 1)
-
-        self.gender_lbl = QLabel(patients_form_page)
-        self.gender_lbl.setObjectName(u"gender_lbl")
-        self.gender_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.container_general_grid.addWidget(self.gender_lbl, 1, 0, 1, 1)
-
         self.gender_input = QComboBox(patients_form_page)
         self.gender_input.addItem("")
         self.gender_input.addItem("")
@@ -73,18 +46,26 @@ class Ui_patients_form_page(object):
 
         self.container_general_grid.addWidget(self.gender_input, 1, 1, 1, 1)
 
-        self.birth_date_input = QDateEdit(patients_form_page)
-        self.birth_date_input.setObjectName(u"birth_date_input")
-        self.birth_date_input.setMinimumDateTime(QDateTime(QDate(1901, 1, 1), QTime(0, 0, 0)))
-        self.birth_date_input.setCalendarPopup(True)
+        self.phone2_lbl = QLabel(patients_form_page)
+        self.phone2_lbl.setObjectName(u"phone2_lbl")
+        self.phone2_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.container_general_grid.addWidget(self.birth_date_input, 2, 1, 1, 1)
+        self.container_general_grid.addWidget(self.phone2_lbl, 5, 2, 1, 1)
 
-        self.birth_date_lbl = QLabel(patients_form_page)
-        self.birth_date_lbl.setObjectName(u"birth_date_lbl")
-        self.birth_date_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.name_input = QLineEdit(patients_form_page)
+        self.name_input.setObjectName(u"name_input")
 
-        self.container_general_grid.addWidget(self.birth_date_lbl, 2, 0, 1, 1)
+        self.container_general_grid.addWidget(self.name_input, 0, 1, 1, 1)
+
+        self.phone1_input = QLineEdit(patients_form_page)
+        self.phone1_input.setObjectName(u"phone1_input")
+
+        self.container_general_grid.addWidget(self.phone1_input, 5, 1, 1, 1)
+
+        self.rg_input = QLineEdit(patients_form_page)
+        self.rg_input.setObjectName(u"rg_input")
+
+        self.container_general_grid.addWidget(self.rg_input, 4, 3, 1, 1)
 
         self.name_lbl = QLabel(patients_form_page)
         self.name_lbl.setObjectName(u"name_lbl")
@@ -98,11 +79,54 @@ class Ui_patients_form_page(object):
 
         self.container_general_grid.addWidget(self.cpf_lbl, 4, 0, 1, 1)
 
+        self.email_input = QLineEdit(patients_form_page)
+        self.email_input.setObjectName(u"email_input")
+
+        self.container_general_grid.addWidget(self.email_input, 3, 1, 1, 1)
+
+        self.gender_lbl = QLabel(patients_form_page)
+        self.gender_lbl.setObjectName(u"gender_lbl")
+        self.gender_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.container_general_grid.addWidget(self.gender_lbl, 1, 0, 1, 1)
+
+        self.birth_date_input = QDateEdit(patients_form_page)
+        self.birth_date_input.setObjectName(u"birth_date_input")
+        self.birth_date_input.setEnabled(False)
+        self.birth_date_input.setMinimumDateTime(QDateTime(QDate(1901, 1, 1), QTime(0, 0, 0)))
+        self.birth_date_input.setCalendarPopup(True)
+
+        self.container_general_grid.addWidget(self.birth_date_input, 2, 1, 1, 1)
+
+        self.rg_lbl = QLabel(patients_form_page)
+        self.rg_lbl.setObjectName(u"rg_lbl")
+        self.rg_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.container_general_grid.addWidget(self.rg_lbl, 4, 2, 1, 1)
+
+        self.phone2_input = QLineEdit(patients_form_page)
+        self.phone2_input.setObjectName(u"phone2_input")
+
+        self.container_general_grid.addWidget(self.phone2_input, 5, 3, 1, 1)
+
+        self.birth_date_null_check = QCheckBox(patients_form_page)
+        self.birth_date_null_check.setObjectName(u"birth_date_null_check")
+        self.birth_date_null_check.setChecked(True)
+        self.birth_date_null_check.setTristate(False)
+
+        self.container_general_grid.addWidget(self.birth_date_null_check, 2, 2, 1, 1)
+
         self.email_lbl = QLabel(patients_form_page)
         self.email_lbl.setObjectName(u"email_lbl")
         self.email_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.container_general_grid.addWidget(self.email_lbl, 3, 0, 1, 1)
+
+        self.birth_date_lbl = QLabel(patients_form_page)
+        self.birth_date_lbl.setObjectName(u"birth_date_lbl")
+        self.birth_date_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.container_general_grid.addWidget(self.birth_date_lbl, 2, 0, 1, 1)
 
         self.phone1_lbl = QLabel(patients_form_page)
         self.phone1_lbl.setObjectName(u"phone1_lbl")
@@ -110,25 +134,8 @@ class Ui_patients_form_page(object):
 
         self.container_general_grid.addWidget(self.phone1_lbl, 5, 0, 1, 1)
 
-        self.phone1_input = QLineEdit(patients_form_page)
-        self.phone1_input.setObjectName(u"phone1_input")
-
-        self.container_general_grid.addWidget(self.phone1_input, 5, 1, 1, 1)
-
-        self.phone2_lbl = QLabel(patients_form_page)
-        self.phone2_lbl.setObjectName(u"phone2_lbl")
-        self.phone2_lbl.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.container_general_grid.addWidget(self.phone2_lbl, 5, 2, 1, 1)
-
-        self.phone2_input = QLineEdit(patients_form_page)
-        self.phone2_input.setObjectName(u"phone2_input")
-
-        self.container_general_grid.addWidget(self.phone2_input, 5, 3, 1, 1)
-
-        self.container_general_grid.setColumnStretch(1, 5)
-        self.container_general_grid.setColumnStretch(2, 1)
-        self.container_general_grid.setColumnStretch(3, 2)
+        self.container_general_grid.setColumnStretch(1, 2)
+        self.container_general_grid.setColumnStretch(3, 1)
 
         self.verticalLayout.addLayout(self.container_general_grid)
 
@@ -247,9 +254,25 @@ class Ui_patients_form_page(object):
         self.verticalLayout.addWidget(self.container_btns)
 
         self.verticalLayout.setStretch(1, 15)
+        self.verticalLayout.setStretch(2, 1)
         self.verticalLayout.setStretch(3, 15)
-        self.verticalLayout.setStretch(4, 1)
-        self.verticalLayout.setStretch(5, 15)
+        QWidget.setTabOrder(self.name_input, self.gender_input)
+        QWidget.setTabOrder(self.gender_input, self.birth_date_input)
+        QWidget.setTabOrder(self.birth_date_input, self.birth_date_null_check)
+        QWidget.setTabOrder(self.birth_date_null_check, self.email_input)
+        QWidget.setTabOrder(self.email_input, self.cpf_input)
+        QWidget.setTabOrder(self.cpf_input, self.rg_input)
+        QWidget.setTabOrder(self.rg_input, self.phone1_input)
+        QWidget.setTabOrder(self.phone1_input, self.phone2_input)
+        QWidget.setTabOrder(self.phone2_input, self.zipcode_input)
+        QWidget.setTabOrder(self.zipcode_input, self.address_input)
+        QWidget.setTabOrder(self.address_input, self.address_nbr_input)
+        QWidget.setTabOrder(self.address_nbr_input, self.complement_input)
+        QWidget.setTabOrder(self.complement_input, self.neighb_input)
+        QWidget.setTabOrder(self.neighb_input, self.city_input)
+        QWidget.setTabOrder(self.city_input, self.estate_input)
+        QWidget.setTabOrder(self.estate_input, self.save_btn)
+        QWidget.setTabOrder(self.save_btn, self.cancel_btn)
 
         self.retranslateUi(patients_form_page)
 
@@ -260,25 +283,26 @@ class Ui_patients_form_page(object):
         patients_form_page.setWindowTitle(QCoreApplication.translate("patients_form_page", u"Form", None))
         self.general_lbl.setText(QCoreApplication.translate("patients_form_page", u"Geral", None))
         self.cpf_input.setInputMask(QCoreApplication.translate("patients_form_page", u"000.000.000-00;_", None))
-        self.rg_input.setInputMask("")
-        self.email_input.setInputMask("")
-        self.rg_lbl.setText(QCoreApplication.translate("patients_form_page", u"RG", None))
-        self.gender_lbl.setText(QCoreApplication.translate("patients_form_page", u"Sexo*", None))
         self.gender_input.setItemText(0, "")
         self.gender_input.setItemText(1, QCoreApplication.translate("patients_form_page", u"Masculino", None))
         self.gender_input.setItemText(2, QCoreApplication.translate("patients_form_page", u"Feminino", None))
         self.gender_input.setItemText(3, "")
 
         self.gender_input.setCurrentText("")
-        self.birth_date_input.setDisplayFormat(QCoreApplication.translate("patients_form_page", u"dd/MM/yyyy", None))
-        self.birth_date_lbl.setText(QCoreApplication.translate("patients_form_page", u"Data de nasc.", None))
+        self.phone2_lbl.setText(QCoreApplication.translate("patients_form_page", u"Telefone 2", None))
+        self.phone1_input.setInputMask(QCoreApplication.translate("patients_form_page", u"(99)99999-9999;_", None))
+        self.rg_input.setInputMask("")
         self.name_lbl.setText(QCoreApplication.translate("patients_form_page", u"Nome*", None))
         self.cpf_lbl.setText(QCoreApplication.translate("patients_form_page", u"CPF*", None))
-        self.email_lbl.setText(QCoreApplication.translate("patients_form_page", u"E-mail", None))
-        self.phone1_lbl.setText(QCoreApplication.translate("patients_form_page", u"Telefone", None))
-        self.phone1_input.setInputMask(QCoreApplication.translate("patients_form_page", u"(99)99999-9999;_", None))
-        self.phone2_lbl.setText(QCoreApplication.translate("patients_form_page", u"Telefone 2", None))
+        self.email_input.setInputMask("")
+        self.gender_lbl.setText(QCoreApplication.translate("patients_form_page", u"Sexo*", None))
+        self.birth_date_input.setDisplayFormat(QCoreApplication.translate("patients_form_page", u"dd/MM/yyyy", None))
+        self.rg_lbl.setText(QCoreApplication.translate("patients_form_page", u"RG", None))
         self.phone2_input.setInputMask(QCoreApplication.translate("patients_form_page", u"(99)99999-9999;_", None))
+        self.birth_date_null_check.setText(QCoreApplication.translate("patients_form_page", u"N\u00e3o informar", None))
+        self.email_lbl.setText(QCoreApplication.translate("patients_form_page", u"E-mail", None))
+        self.birth_date_lbl.setText(QCoreApplication.translate("patients_form_page", u"Data de nasc.", None))
+        self.phone1_lbl.setText(QCoreApplication.translate("patients_form_page", u"Telefone", None))
         self.address_lbl_2.setText(QCoreApplication.translate("patients_form_page", u"Endere\u00e7o", None))
         self.neighb_lbl.setText(QCoreApplication.translate("patients_form_page", u"Bairro", None))
         self.complement_lbl.setText(QCoreApplication.translate("patients_form_page", u"Complemento", None))

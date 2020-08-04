@@ -36,9 +36,6 @@ def test_patient_ctrl_implementation(patient_controller, case_generator):
     get_patients = patient_controller.get(patient_ids, many=True).all()
     assert len(get_patients) == len(patient_ids)
 
-    # get_records method
-    assert isinstance(patient_controller.get_records(patients[0].id), orm.Query)
-
 
 def test_user_ctrl_implementation(user_controller, case_generator):
     users = _make_cases(case_generator.make_user_test_cases())

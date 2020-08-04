@@ -9,7 +9,7 @@ from ProntoPlus.tests._cases import *
 
 @pytest.fixture(scope='session')
 def session_mocker():
-    engine = sa.create_engine('sqlite://')
+    engine = sa.create_engine('sqlite:///database.db')
     db.metadata.create_all(engine)
 
     session = orm.sessionmaker(engine)()

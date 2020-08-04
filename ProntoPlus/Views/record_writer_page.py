@@ -1,3 +1,5 @@
+import ProntoPlus.Views.patient_data_widget as pdwidget
+
 import PySide2.QtGui as qtGui
 import PySide2.QtWidgets as qtW
 import PySide2.QtCore as qtCore
@@ -6,6 +8,7 @@ import PySide2.QtPrintSupport as qtPrint
 import os
 import sys
 import uuid
+import typing as t
 
 FONT_SIZES = [7, 8, 9, 10, 11, 12, 13, 14, 18, 24, 36, 48, 64, 72, 96, 144, 288]
 IMAGE_EXTENSIONS = ['.jpg', '.png', '.bmp']
@@ -63,12 +66,28 @@ class TextEdit(qtW.QTextEdit):
         super(TextEdit, self).insertFromMimeData(source)
 
 
+class PatientInfo(pdwidget.Ui_patient_data, qtW.QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+
 class MainWindow(qtW.QMainWindow):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, patient_data: t.Dict = None, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
+        self.saved = True
+        self._just_loaded = True
+        if patient_data is None:
+            self.patient_data = {}
+        else:
+            self.patient_data = patient_data
+
         layout = qtW.QVBoxLayout()
+        self.patient_data_widget = PatientInfo()
+
         self.editor = TextEdit()
         # Setup the QTextEdit editor configuration
         self.editor.setAutoFormatting(qtW.QTextEdit.AutoAll)
@@ -78,11 +97,14 @@ class MainWindow(qtW.QMainWindow):
         self.editor.setFont(font)
         # We need to repeat the size to init the current format.
         self.editor.setFontPointSize(12)
+        self.editor.textChanged.connect(self._check_file_save)
+
 
         # self.path holds the path of the currently open file.
         # If none, we haven't got a file open yet (or creating new).
         self.path = None
 
+        layout.addWidget(self.patient_data_widget)
         layout.addWidget(self.editor)
 
         container = qtW.QWidget()
@@ -100,20 +122,16 @@ class MainWindow(qtW.QMainWindow):
         self.addToolBar(file_toolbar)
         file_menu = self.menuBar().addMenu("&Menu")
 
-        save_file_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'disk.png')), "Salvar", self)
+        save_file_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'disk.png')), "Salvar", self)
         save_file_action.setStatusTip("Salvar")
-        save_file_action.triggered.connect(self.file_save)
+        save_file_action.setShortcut(qtGui.QKeySequence.Save)
+        save_file_action.triggered.connect(self.save_record)
         file_menu.addAction(save_file_action)
         file_toolbar.addAction(save_file_action)
 
-        print_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'printer.png')), "Imprimir...", self)
+        print_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'printer.png')), "Imprimir...", self)
         print_action.setStatusTip("Imprimir")
-        print_action.triggered.connect(self.file_print)
-        file_menu.addAction(print_action)
-        file_toolbar.addAction(print_action)
-
-        print_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'printer.png')), "Imprimir...", self)
-        print_action.setStatusTip("Imprimir")
+        print_action.setShortcut(qtGui.QKeySequence.Print)
         print_action.triggered.connect(self.file_print)
         file_menu.addAction(print_action)
         file_toolbar.addAction(print_action)
@@ -123,13 +141,13 @@ class MainWindow(qtW.QMainWindow):
         self.addToolBar(edit_toolbar)
         edit_menu = self.menuBar().addMenu("&Editar")
 
-        undo_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'arrow-curve-180-left.png')), "Desfazer", self)
+        undo_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-curve-180-left.png')), "Desfazer", self)
         undo_action.setStatusTip("Desfazer")
         undo_action.triggered.connect(self.editor.undo)
         edit_toolbar.addAction(undo_action)
         edit_menu.addAction(undo_action)
 
-        redo_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'arrow-curve.png')), "Refazer", self)
+        redo_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-curve.png')), "Refazer", self)
         redo_action.setStatusTip("Refazer")
         redo_action.triggered.connect(self.editor.redo)
         edit_toolbar.addAction(redo_action)
@@ -137,37 +155,37 @@ class MainWindow(qtW.QMainWindow):
 
         edit_menu.addSeparator()
 
-        cut_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'scissors.png')), "Cortar", self)
+        cut_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'scissors.png')), "Cortar", self)
         cut_action.setStatusTip("Cortar texto selecionado")
         cut_action.setShortcut(qtGui.QKeySequence.Cut)
         cut_action.triggered.connect(self.editor.cut)
         edit_toolbar.addAction(cut_action)
         edit_menu.addAction(cut_action)
 
-        copy_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'document-copy.png')), "Copiar", self)
+        copy_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'document-copy.png')), "Copiar", self)
         copy_action.setStatusTip("Copiar texto selecionado")
-        cut_action.setShortcut(qtGui.QKeySequence.Copy)
+        copy_action.setShortcut(qtGui.QKeySequence.Copy)
         copy_action.triggered.connect(self.editor.copy)
         edit_toolbar.addAction(copy_action)
         edit_menu.addAction(copy_action)
 
-        paste_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'clipboard-paste-document-text.png')), "Colar",
+        paste_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'clipboard-paste-document-text.png')), "Colar",
                                    self)
         paste_action.setStatusTip("Colar")
-        cut_action.setShortcut(qtGui.QKeySequence.Paste)
+        paste_action.setShortcut(qtGui.QKeySequence.Paste)
         paste_action.triggered.connect(self.editor.paste)
         edit_toolbar.addAction(paste_action)
         edit_menu.addAction(paste_action)
 
-        select_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'selection-input.png')), "Selecionar tudo", self)
+        select_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'selection-input.png')), "Selecionar tudo", self)
         select_action.setStatusTip("Selecionar todo o texto")
-        cut_action.setShortcut(qtGui.QKeySequence.SelectAll)
+        select_action.setShortcut(qtGui.QKeySequence.SelectAll)
         select_action.triggered.connect(self.editor.selectAll)
         edit_menu.addAction(select_action)
 
         edit_menu.addSeparator()
 
-        wrap_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'arrow-continue.png')), "Quebra de linha",
+        wrap_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-continue.png')), "Quebra de linha",
                                   self)
         wrap_action.setStatusTip("Alternar quebra automática de texto para janela")
         wrap_action.setCheckable(True)
@@ -193,7 +211,7 @@ class MainWindow(qtW.QMainWindow):
         self.fontsize.currentIndexChanged[str].connect(lambda s: self.editor.setFontPointSize(float(s)))
         format_toolbar.addWidget(self.fontsize)
 
-        self.bold_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-bold.png')), "Negrito", self)
+        self.bold_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-bold.png')), "Negrito", self)
         self.bold_action.setStatusTip("Negrito")
         self.bold_action.setShortcut(qtGui.QKeySequence.Bold)
         self.bold_action.setCheckable(True)
@@ -202,7 +220,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.bold_action)
         format_menu.addAction(self.bold_action)
 
-        self.italic_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-italic.png')), "Itálico", self)
+        self.italic_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-italic.png')), "Itálico", self)
         self.italic_action.setStatusTip("Itálico")
         self.italic_action.setShortcut(qtGui.QKeySequence.Italic)
         self.italic_action.setCheckable(True)
@@ -210,7 +228,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.italic_action)
         format_menu.addAction(self.italic_action)
 
-        self.underline_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-underline.png')), "Sublinhar",
+        self.underline_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-underline.png')), "Sublinhar",
                                             self)
         self.underline_action.setStatusTip("Sublinhar")
         self.underline_action.setShortcut(qtGui.QKeySequence.Underline)
@@ -221,14 +239,15 @@ class MainWindow(qtW.QMainWindow):
 
         format_menu.addSeparator()
 
-        self.alignl_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-alignment.png')), "Alinhar à esquerda", self)
+        self.alignl_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment.png')),
+                                         "Alinhar à esquerda", self)
         self.alignl_action.setStatusTip("Alinhar texto à esquerda")
         self.alignl_action.setCheckable(True)
         self.alignl_action.triggered.connect(lambda: self.editor.setAlignment(qtCore.Qt.AlignLeft))
         format_toolbar.addAction(self.alignl_action)
         format_menu.addAction(self.alignl_action)
 
-        self.alignc_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-alignment-center.png')),
+        self.alignc_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-center.png')),
                                          "Alinhar ao centro", self)
         self.alignc_action.setStatusTip("Alinhar texto ao centro")
         self.alignc_action.setCheckable(True)
@@ -236,14 +255,16 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.alignc_action)
         format_menu.addAction(self.alignc_action)
 
-        self.alignr_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-alignment-right.png')), "Alinhar à direita", self)
+        self.alignr_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-right.png')),
+                                         "Alinhar à direita", self)
         self.alignr_action.setStatusTip("Alinhar texto à direita")
         self.alignr_action.setCheckable(True)
         self.alignr_action.triggered.connect(lambda: self.editor.setAlignment(qtCore.Qt.AlignRight))
         format_toolbar.addAction(self.alignr_action)
         format_menu.addAction(self.alignr_action)
 
-        self.alignj_action = qtW.QAction(qtGui.QIcon(os.path.join('images', 'edit-alignment-justify.png')), "Justificar", self)
+        self.alignj_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-justify.png')),
+                                         "Justificar", self)
         self.alignj_action.setStatusTip("Justificar texto")
         self.alignj_action.setCheckable(True)
         self.alignj_action.triggered.connect(lambda: self.editor.setAlignment(qtCore.Qt.AlignJustify))
@@ -272,7 +293,7 @@ class MainWindow(qtW.QMainWindow):
         # Initialize.
         self.update_format()
         self.update_title()
-        self.show()
+        # self.show()
 
     def block_signals(self, objects, b):
         for o in objects:
@@ -303,17 +324,20 @@ class MainWindow(qtW.QMainWindow):
         self.block_signals(self._format_actions, False)
 
     def dialog_critical(self, s):
-        dlg = qtCore.QMessageBox(self)
+        dlg = qtW.QMessageBox(self)
         dlg.setText(s)
-        dlg.setIcon(qtCore.QMessageBox.Critical)
+        dlg.setIcon(qtW.QMessageBox.Critical)
         dlg.show()
 
-    def file_save(self):
-        # text = self.editor.toHtml()
-        # record_ctrl = _ctrls.RecordCtrl(_db.session)
+    def _check_file_save(self):
+        if self.saved and not self._just_loaded:
+            self.saved = False
+        else:
+            self._just_loaded = False
+            pass
 
-        # record_ctrl.add()
-        pass
+    def save_record(self):
+        self.saved = True
 
     def file_print(self):
         dlg = qtPrint.QPrintDialog()
@@ -336,4 +360,4 @@ if __name__ == '__main__':
     app.setApplicationName("Novo Prontuario")
 
     window = MainWindow()
-    app.exec_()
+    sys.exit(app.exec_())

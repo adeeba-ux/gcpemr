@@ -2,6 +2,7 @@ import ProntoPlus.Models.base as _base
 import uuid
 import typing as t
 import sqlalchemy.orm as orm
+import sqlalchemy as sa
 import abc
 import marshmallow as mw
 
@@ -29,17 +30,27 @@ class BaseCtrl(abc.ABC):
 
         return result
 
+    def _upsert(self, obj: _CTRLTYPE):
+        check_if_exists = self.get(obj.id).all()
+        if check_if_exists:
+            self._session.merge(obj)
+        else:
+            self._session.add(obj)
+        return True
+
     def add(self, obj: _CTRLTYPE, many: bool = False) -> t.Union[bool, t.List[t.Union[Exception]]]:
+
         if many:
             if not isinstance(obj, list):
                 obj = [obj]
             try:
-                self._session.add_all(obj)
+                for o in obj:
+                    self._upsert(o)
             except Exception as e:
                 return [False, e]
         else:
             try:
-                self._session.add(obj)
+                self._upsert(obj)
             except Exception as e:
                 return [False, e]
 

@@ -35,6 +35,7 @@ class Person(_base.Base, abc.ABC):
         positive = 1
 
     cpf: str = da.field(default_factory=lambda: None)
+    rg: str = da.field(default_factory=lambda: None)
     name: str = da.field(default_factory=lambda: '')
     gender: Gender = da.field(default_factory=lambda: Person.Gender(-1))
     created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
@@ -64,8 +65,15 @@ class PersonSchema(_base.BaseSchema):
         if last_modified_date and last_modified_date < created_date:
             raise mw.ValidationError(f'Last modified date is before creation date')
 
+    @mw.validates('birth_date')
+    def birth_date_must_be_past(self, data, **kwargs):
+        today = dt.date.today()
+        if today < data:
+            raise mw.ValidationError('Birth date must be in the past.')
+
     name = mw.fields.Str(required=True, allow_none=False)
     cpf = _custom_fields.CPF(required=True, allow_none=False)
+    rg = mw.fields.Str(allow_none=True)
     birth_date = mw.fields.Date()
     gender = _custom_fields.EnumField(Person.Gender)
     address = mw.fields.Str()
@@ -79,3 +87,8 @@ class PersonSchema(_base.BaseSchema):
     @mw.post_load
     def _make(self, data, **kwargs):
         return Person(**data)
+
+    @mw.post_dump
+    def _dump(self, data, **kwargs):
+        data['gender'] = Person.Gender(data['gender']).value
+        return data
