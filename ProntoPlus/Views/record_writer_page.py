@@ -1,4 +1,5 @@
 import ProntoPlus.Views.patient_data_widget as pdwidget
+import ProntoPlus.Views.assets_rc
 
 import PySide2.QtGui as qtGui
 import PySide2.QtWidgets as qtW
@@ -122,14 +123,14 @@ class MainWindow(qtW.QMainWindow):
         self.addToolBar(file_toolbar)
         file_menu = self.menuBar().addMenu("&Menu")
 
-        save_file_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'disk.png')), "Salvar", self)
+        save_file_action = qtW.QAction(qtGui.QIcon(u":/writer/disk.png"), "Salvar", self)
         save_file_action.setStatusTip("Salvar")
         save_file_action.setShortcut(qtGui.QKeySequence.Save)
         save_file_action.triggered.connect(self.save_record)
         file_menu.addAction(save_file_action)
         file_toolbar.addAction(save_file_action)
 
-        print_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'printer.png')), "Imprimir...", self)
+        print_action = qtW.QAction(qtGui.QIcon(u":/writer/printer.png"), "Imprimir...", self)
         print_action.setStatusTip("Imprimir")
         print_action.setShortcut(qtGui.QKeySequence.Print)
         print_action.triggered.connect(self.file_print)
@@ -141,13 +142,13 @@ class MainWindow(qtW.QMainWindow):
         self.addToolBar(edit_toolbar)
         edit_menu = self.menuBar().addMenu("&Editar")
 
-        undo_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-curve-180-left.png')), "Desfazer", self)
+        undo_action = qtW.QAction(qtGui.QIcon(u":/writer/arrow-curve-180-left.png"), "Desfazer", self)
         undo_action.setStatusTip("Desfazer")
         undo_action.triggered.connect(self.editor.undo)
         edit_toolbar.addAction(undo_action)
         edit_menu.addAction(undo_action)
 
-        redo_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-curve.png')), "Refazer", self)
+        redo_action = qtW.QAction(qtGui.QIcon(u":/writer/arrow-curve.png"), "Refazer", self)
         redo_action.setStatusTip("Refazer")
         redo_action.triggered.connect(self.editor.redo)
         edit_toolbar.addAction(redo_action)
@@ -155,21 +156,21 @@ class MainWindow(qtW.QMainWindow):
 
         edit_menu.addSeparator()
 
-        cut_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'scissors.png')), "Cortar", self)
+        cut_action = qtW.QAction(qtGui.QIcon(u":/writer/scissors.png"), "Cortar", self)
         cut_action.setStatusTip("Cortar texto selecionado")
         cut_action.setShortcut(qtGui.QKeySequence.Cut)
         cut_action.triggered.connect(self.editor.cut)
         edit_toolbar.addAction(cut_action)
         edit_menu.addAction(cut_action)
 
-        copy_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'document-copy.png')), "Copiar", self)
+        copy_action = qtW.QAction(qtGui.QIcon(u":/writer/document-copy.png"), "Copiar", self)
         copy_action.setStatusTip("Copiar texto selecionado")
         copy_action.setShortcut(qtGui.QKeySequence.Copy)
         copy_action.triggered.connect(self.editor.copy)
         edit_toolbar.addAction(copy_action)
         edit_menu.addAction(copy_action)
 
-        paste_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'clipboard-paste-document-text.png')), "Colar",
+        paste_action = qtW.QAction(qtGui.QIcon(u":/writer/clipboard-paste-document-text.png"), "Colar",
                                    self)
         paste_action.setStatusTip("Colar")
         paste_action.setShortcut(qtGui.QKeySequence.Paste)
@@ -177,7 +178,7 @@ class MainWindow(qtW.QMainWindow):
         edit_toolbar.addAction(paste_action)
         edit_menu.addAction(paste_action)
 
-        select_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'selection-input.png')), "Selecionar tudo", self)
+        select_action = qtW.QAction(qtGui.QIcon(u":/writer/selection-input.png"), "Selecionar tudo", self)
         select_action.setStatusTip("Selecionar todo o texto")
         select_action.setShortcut(qtGui.QKeySequence.SelectAll)
         select_action.triggered.connect(self.editor.selectAll)
@@ -185,7 +186,7 @@ class MainWindow(qtW.QMainWindow):
 
         edit_menu.addSeparator()
 
-        wrap_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'arrow-continue.png')), "Quebra de linha",
+        wrap_action = qtW.QAction(qtGui.QIcon(u":/writer/arrow-continue.png"), "Quebra de linha",
                                   self)
         wrap_action.setStatusTip("Alternar quebra automática de texto para janela")
         wrap_action.setCheckable(True)
@@ -211,7 +212,7 @@ class MainWindow(qtW.QMainWindow):
         self.fontsize.currentIndexChanged[str].connect(lambda s: self.editor.setFontPointSize(float(s)))
         format_toolbar.addWidget(self.fontsize)
 
-        self.bold_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-bold.png')), "Negrito", self)
+        self.bold_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-bold.png"), "Negrito", self)
         self.bold_action.setStatusTip("Negrito")
         self.bold_action.setShortcut(qtGui.QKeySequence.Bold)
         self.bold_action.setCheckable(True)
@@ -220,7 +221,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.bold_action)
         format_menu.addAction(self.bold_action)
 
-        self.italic_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-italic.png')), "Itálico", self)
+        self.italic_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-italic.png"), "Itálico", self)
         self.italic_action.setStatusTip("Itálico")
         self.italic_action.setShortcut(qtGui.QKeySequence.Italic)
         self.italic_action.setCheckable(True)
@@ -228,7 +229,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.italic_action)
         format_menu.addAction(self.italic_action)
 
-        self.underline_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-underline.png')), "Sublinhar",
+        self.underline_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-underline.png"), "Sublinhar",
                                             self)
         self.underline_action.setStatusTip("Sublinhar")
         self.underline_action.setShortcut(qtGui.QKeySequence.Underline)
@@ -239,7 +240,7 @@ class MainWindow(qtW.QMainWindow):
 
         format_menu.addSeparator()
 
-        self.alignl_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment.png')),
+        self.alignl_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-alignment.png"),
                                          "Alinhar à esquerda", self)
         self.alignl_action.setStatusTip("Alinhar texto à esquerda")
         self.alignl_action.setCheckable(True)
@@ -247,7 +248,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.alignl_action)
         format_menu.addAction(self.alignl_action)
 
-        self.alignc_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-center.png')),
+        self.alignc_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-alignment-center.png"),
                                          "Alinhar ao centro", self)
         self.alignc_action.setStatusTip("Alinhar texto ao centro")
         self.alignc_action.setCheckable(True)
@@ -255,7 +256,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.alignc_action)
         format_menu.addAction(self.alignc_action)
 
-        self.alignr_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-right.png')),
+        self.alignr_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-alignment-right.png"),
                                          "Alinhar à direita", self)
         self.alignr_action.setStatusTip("Alinhar texto à direita")
         self.alignr_action.setCheckable(True)
@@ -263,7 +264,7 @@ class MainWindow(qtW.QMainWindow):
         format_toolbar.addAction(self.alignr_action)
         format_menu.addAction(self.alignr_action)
 
-        self.alignj_action = qtW.QAction(qtGui.QIcon(os.path.join('Views', 'images', 'edit-alignment-justify.png')),
+        self.alignj_action = qtW.QAction(qtGui.QIcon(u":/writer/edit-alignment-justify.png"),
                                          "Justificar", self)
         self.alignj_action.setStatusTip("Justificar texto")
         self.alignj_action.setCheckable(True)
