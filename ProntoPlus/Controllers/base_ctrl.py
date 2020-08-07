@@ -30,7 +30,7 @@ class BaseCtrl(abc.ABC):
 
         return result
 
-    def _upsert(self, obj: _CTRLTYPE):
+    def _upsert(self, obj: _CTRLTYPE) -> bool:
         check_if_exists = self.get(obj.id).all()
         if check_if_exists:
             self._session.merge(obj)
@@ -63,12 +63,12 @@ class BaseCtrl(abc.ABC):
                 obj = [obj]
             try:
                 for o in obj:
-                    self._session.query(obj).filter(self.CTRLCLASS.id == o.id).delete()
+                    self._session.query(self.CTRLCLASS).filter(self.CTRLCLASS.id == o.id).delete()
             except Exception as e:
                 return [False, e]
         else:
             try:
-                self._session.query(obj).filter(self.CTRLCLASS.id == obj.id).delete()
+                self._session.query(self.CTRLCLASS).filter(self.CTRLCLASS.id == obj.id).delete()
             except Exception as e:
                 return [False, e]
 
@@ -84,3 +84,5 @@ class BaseCtrl(abc.ABC):
     def presentation(self):
         return self.CTRLCLASS.presentation
 
+    def validate(self, obj, **kwargs):
+        return self._CTRLSCHEMA.validate(data=obj, **kwargs)

@@ -7,6 +7,7 @@ import ProntoPlus.Models._custom_fields as _custom_fields
 import ProntoPlus.Models.base as _base
 import abc
 
+
 @da.dataclass
 class Person(_base.Base, abc.ABC):
     """
@@ -38,13 +39,13 @@ class Person(_base.Base, abc.ABC):
     rg: str = da.field(default_factory=lambda: None)
     name: str = da.field(default_factory=lambda: '')
     gender: Gender = da.field(default_factory=lambda: Person.Gender(-1))
-    created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
     birth_date: dt.date = da.field(default_factory=lambda: None)
     address: str = da.field(default_factory=lambda: None)
     email: str = da.field(default_factory=lambda: None)
     phone: str = da.field(default_factory=lambda: None)
     blood_type: BloodType = da.field(default_factory=lambda: Person.BloodType(-1))
     blood_rh: BloodRH = da.field(default_factory=lambda: Person.BloodRH(-1))
+    created_date: dt.datetime = da.field(default_factory=lambda: dt.datetime.now())
     last_modified_date: dt.datetime = da.field(default_factory=lambda: None)
 
     def __post_init__(self):
@@ -68,27 +69,27 @@ class PersonSchema(_base.BaseSchema):
     @mw.validates('birth_date')
     def birth_date_must_be_past(self, data, **kwargs):
         today = dt.date.today()
-        if today < data:
+        if data is not None and today < data:
             raise mw.ValidationError('Birth date must be in the past.')
 
     name = mw.fields.Str(required=True, allow_none=False)
     cpf = _custom_fields.CPF(required=True, allow_none=False)
     rg = mw.fields.Str(allow_none=True)
-    birth_date = mw.fields.Date()
+    birth_date = mw.fields.Date(allow_none=True)
     gender = _custom_fields.EnumField(Person.Gender)
     address = mw.fields.Str()
-    email = mw.fields.Email()
+    email = mw.fields.Email(allow_none=True)
     phone = mw.fields.Str()
     blood_type = _custom_fields.EnumField(Person.BloodType)
     blood_rh = _custom_fields.EnumField(Person.BloodRH)
-    created_date = mw.fields.DateTime(required=True, format='%d-%m-%Y %H:%M:%S')
-    last_modified_date = mw.fields.DateTime(format='%d-%m-%Y %H:%M:%S')
+    created_date = mw.fields.DateTime(required=True)
+    last_modified_date = mw.fields.DateTime()
 
     @mw.post_load
     def _make(self, data, **kwargs):
         return Person(**data)
 
-    @mw.post_dump
-    def _dump(self, data, **kwargs):
-        data['gender'] = Person.Gender(data['gender']).value
-        return data
+    # @mw.post_dump
+    # def _dump(self, data, **kwargs):
+    #     data['gender'] = Person.Gender(data['gender']).value
+    #     return data

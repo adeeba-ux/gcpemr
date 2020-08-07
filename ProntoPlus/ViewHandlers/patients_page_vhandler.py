@@ -10,7 +10,7 @@ import ProntoPlus.Controllers as Ctrls
 
 
 class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
-    def __init__(self, parent: qtW.QMainWindow = None):
+    def __init__(self, parent: vHandler.MainVHandler = None):
         super().__init__()
         self.setupUi(self)
 
@@ -43,6 +43,7 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
     def setup_table_context_menu(self, position):
         menu = qtW.QMenu()
         edit_action = menu.addAction("Editar")
+        delete_action = menu.addAction("Apagar paciente")
         record_action = menu.addAction("Abrir Prontuário")
 
         action = menu.exec_(self.patient_table.mapToGlobal(position))
@@ -50,6 +51,8 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
             self._add_patient_with_payload()
         elif action == record_action:
             self._open_record()
+        elif action == delete_action:
+            self._delete_patient()
 
     def show_table(self, rows: t.Dict = []):
         if not rows:
@@ -103,14 +106,38 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         page.setup_patient_data()
         self.parent.load_page(page)
 
+    def _delete_patient(self):
+        data = self.patient_ctrl.load(self._get_current_patient())
+
+        confirmation = qtW.QMessageBox()
+        confirmation.setText(f'Tem certeza de que deseja deletar {data.name}?')
+        confirmation.setStandardButtons(qtW.QMessageBox.Yes | qtW.QMessageBox.No)
+
+        sim_btn = confirmation.button(qtW.QMessageBox.Yes)
+        sim_btn.setText('Sim')
+        nao_btn = confirmation.button(qtW.QMessageBox.No)
+        nao_btn.setText('Não')
+
+        confirmation.exec_()
+
+        if confirmation.clickedButton() == sim_btn:
+            deletion = self.patient_ctrl.delete(data)
+            if not isinstance(deletion, list):
+                self.show_table()
+            else:
+                self.parent.load_error_msg('Delete', '', deletion[1])
+
     def _search(self):
         filter_txt = self.patient_search_input.text()
         data = self._search_patients(filter_txt)
         self.show_table(data)
 
     def _open_record(self):
-        data = self._get_current_patient()
-        data['record'] = self.record_ctrl.get_from_patient(data['id'], data['tenant'])
+        data = {
+            'patient': self._get_current_patient()
+        }
+        data['record'] = self.record_ctrl.get_from_patient(data['patient']['id'], data['patient']['tenant'])
+
         self.writer.patient_data = data
         self.writer.setup_patient_data()
         self.writer.show()

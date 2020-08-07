@@ -7,16 +7,13 @@ from .options_page_vhandler import OptionsPageVHandler
 import PySide2.QtWidgets as qtW
 import sys
 import uuid
-import configparser as cfg
-
-config = cfg.ConfigParser()
-config.read('config.ini')
 
 
-def start():
+def start(cfg):
     app = qtW.QApplication(sys.argv)
-    window = main_vhandler.MainVHandler()
-    window.TENANT = uuid.UUID(config['CLIENT']['tenant'])
+    app.setStyle('Breeze')
+    window = main_vhandler.MainVHandler(cfg)
+    window.TENANT = uuid.UUID(cfg['CLIENT']['tenant'])
     window.show()
     sys.exit(app.exec_())
 

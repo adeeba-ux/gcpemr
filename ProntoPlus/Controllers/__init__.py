@@ -4,13 +4,13 @@ from .user_ctrl import UserCtrl
 import ProntoPlus.Models.db as _db
 
 
-def init_patient_ctrl():
+def init_patient_ctrl() -> PatientCtrl:
     return PatientCtrl(_db.session)
 
 
-def init_record_ctrl():
+def init_record_ctrl() -> RecordCtrl:
     return RecordCtrl(_db.session)
 
 
-def init_user_ctrl():
+def init_user_ctrl() -> UserCtrl:
     return UserCtrl(_db.session)

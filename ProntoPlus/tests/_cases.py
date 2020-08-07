@@ -1,6 +1,7 @@
 import uuid
 import datetime as dt
 import ProntoPlus.Models as Models
+import ProntoPlus.config as cfg
 
 
 # TODO: implement Faker generators
@@ -40,7 +41,7 @@ class Cases:
                     "phone": "2127629953",
                     "blood_type": Models.Person.BloodType.ab,
                     "blood_rh": Models.Person.BloodRH.negative,
-                    "created_date": dt.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                    "created_date": dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 },
                 {
                     "tenant": self.TENANT,
@@ -53,7 +54,7 @@ class Cases:
                     "email": "test.email.2@email.com",
                     "blood_type": Models.Person.BloodType.o,
                     "blood_rh": Models.Person.BloodRH.undefined,
-                    "created_date": dt.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                    "created_date": dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 },
                 {
                     "tenant": self.TENANT,
@@ -66,7 +67,7 @@ class Cases:
                     "phone": "2298730706",
                     "blood_type": Models.Person.BloodType.undefined,
                     "blood_rh": Models.Person.BloodRH.undefined,
-                    "created_date": dt.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                    "created_date": dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 }
             ],
             'schema': self.SCHEMAS['person'],
@@ -85,7 +86,7 @@ class Cases:
                     'crm': '',
                     'username': 'User1',
                     'password': 'Password',
-                    'created_date': dt.datetime.now().isoformat(),
+                    'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat']),
                     'last_modified_date': None
                 },
                 {
@@ -95,8 +96,8 @@ class Cases:
                     'crm': '114991',
                     'username': 'User2',
                     'password': 'Password2',
-                    'created_date': dt.datetime.now().isoformat(),
-                    'last_modified_date': (dt.datetime.now() + dt.timedelta(days=10)).isoformat()
+                    'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat']),
+                    'last_modified_date': (dt.datetime.now() + dt.timedelta(days=10)).strftime(cfg['CLIENT']['dateformat'])
                 },
                 {
                     'id': uuid.uuid4(),
@@ -105,7 +106,7 @@ class Cases:
                     'crm': '06/143550',
                     'username': 'User3',
                     'password': 'Password3',
-                    'created_date': dt.datetime.now().isoformat()
+                    'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 }
             ]}
 
@@ -137,14 +138,14 @@ class Cases:
                 'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
-                'created_date': dt.datetime.now().isoformat()
+                'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
             },
             {
                 'id_user': test_user.id,
                 'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
-                'created_date': dt.datetime(2020, 1, 1, 15, 50, 50).isoformat()
+                'created_date': dt.datetime(2020, 1, 1, 15, 50, 50).strftime(cfg['CLIENT']['dateformat'])
             }
         ]
 
@@ -158,15 +159,15 @@ class Cases:
                     'id': uuid.uuid4(),
                     'tenant': uuid.uuid4(),
                     'quota': 10,
-                    'created_date': dt.datetime.now().isoformat()
+                    'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 },
                 {
                     'id': uuid.uuid4(),
                     'tenant': uuid.uuid4(),
                     'quota': 9,
-                    'created_date': dt.datetime.now().isoformat(),
-                    'expiration_date': (dt.datetime.now() + dt.timedelta(days=1)).isoformat(),
-                    'last_checked_date': dt.datetime.now().isoformat()
+                    'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat']),
+                    'expiration_date': (dt.datetime.now() + dt.timedelta(days=1)).strftime(cfg['CLIENT']['dateformat']),
+                    'last_checked_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
                 }
             ],
             'schema': self.SCHEMAS['license'],
@@ -262,14 +263,14 @@ class BadCases(Cases):
             if i == 0:
                 case['id'] = 'Key1'
             elif i == 1:
-                case['created_date'] = dt.datetime(2020, 2, 10)
+                case['created_date'] = dt.datetime(2020, 2, 10).strftime(cfg['CLIENT']['dateformat'])
             elif i == 2:
-                case['expiration_date'] = dt.datetime(2020, 2, 1, 10, 55).isoformat()
-                case['created_date'] = dt.datetime(2020, 2, 1, 10, 54).isoformat()
+                case['expiration_date'] = dt.datetime(2020, 2, 1, 10, 55).strftime(cfg['CLIENT']['dateformat'])
+                case['created_date'] = dt.datetime(2020, 2, 1, 10, 54).strftime(cfg['CLIENT']['dateformat'])
             elif i == 3:
                 case['quota'] = -1
             elif i == 4:
-                case['last_checked_date'] = dt.datetime(2020, 2, 1)
+                case['last_checked_date'] = dt.datetime(2020, 2, 1).strftime(cfg['CLIENT']['dateformat'])
 
             bad_license_cases['cases'][i] = case
 

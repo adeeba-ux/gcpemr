@@ -3,6 +3,10 @@ import uuid
 import marshmallow as mw
 import abc
 import typing as t
+import configparser
+
+cfg = configparser.ConfigParser()
+cfg.read('config.ini')
 
 
 @da.dataclass()
@@ -13,5 +17,8 @@ class Base(abc.ABC):
 
 
 class BaseSchema(mw.Schema):
+    class Meta:
+        datetimeformat = cfg['CLIENT']['dateformat']
+
     id = mw.fields.UUID()
     tenant = mw.fields.UUID(required=True)

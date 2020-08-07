@@ -327,7 +327,7 @@ class MainWindow(qtW.QMainWindow):
         dlg = qtW.QMessageBox(self)
         dlg.setText(s)
         dlg.setIcon(qtW.QMessageBox.Critical)
-        dlg.show()
+        dlg.exec_()
 
     def _check_file_save(self):
         if self.saved and not self._just_loaded:

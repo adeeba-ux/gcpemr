@@ -8,6 +8,10 @@ import typing as t
 import datetime as dt
 import uuid
 import os
+import configparser
+
+cfg = configparser.ConfigParser()
+cfg.read('config.ini')
 
 
 class RecordWriterVHandler(Views.record_writer_page.MainWindow, qtW.QMainWindow):
@@ -22,25 +26,27 @@ class RecordWriterVHandler(Views.record_writer_page.MainWindow, qtW.QMainWindow)
         else:
             self.patient_data = {}
 
-    def _calculate_age(self):
-        if self.patient_data.get('birth_date') is None:
-            return ''
-        birth = dt.datetime.strptime(self.patient_data.get('birth_date'), '%Y-%m-%d')
-        today = dt.date.today()
-        return str(today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day)))
-
     def setup_patient_data(self):
-        date = dt.datetime.now().strftime('%Y-%m-%d')
-        patient_name = self.patient_data.get('name')
-        age = self._calculate_age()
+        data = self.patient_data.get('patient')
+        record = self.patient_data.get('record')
+
+        date = dt.datetime.now().strftime('%d-%m-%Y')
+        patient_name = data.get('name')
+
+        if data.get('birth_date') is not None:
+            _birth = dt.date(*[int(v) for v in data.get('birth_date').split('-')])
+            _today = dt.date.today()
+            age = str(_today.year - _birth.year - ((_today.month, _today.day) < (_birth.month, _birth.day)))
+        else:
+            age = ''
+
         if age:
             if int(age) > 1:
                 age = ' '.join([age, 'anos'])
             else:
                 age = ' '.join([age, 'ano'])
 
-        patient_gender = self.patient_ctrl.gender_to_string(self.patient_data.get('gender'))
-        record = self.patient_data.get('record')
+        patient_gender = self.patient_ctrl.gender_to_string(data.get('gender'))
 
         self.patient_data_widget.date_output.setText(date)
         self.patient_data_widget.patient_name_output.setText(patient_name)

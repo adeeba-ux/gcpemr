@@ -1,8 +1,14 @@
 import ProntoPlus.Controllers.base_ctrl as _base
 import ProntoPlus.Models as Models
+
 import typing as t
 import uuid
 import datetime as dt
+import configparser
+
+cfg = configparser.ConfigParser()
+cfg.read('config.ini')
+
 
 class RecordCtrl(_base.BaseCtrl):
     CTRLCLASS = Models.Record
@@ -20,7 +26,7 @@ class RecordCtrl(_base.BaseCtrl):
                 'id_user': uuid.uuid4(),
                 'id_patient': patient_id,
                 'tenant': tenant_id,
-                'created_date': dt.datetime.now().isoformat(),
+                'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat']),
                 'text': ''
             }
             result = self.load(record)
