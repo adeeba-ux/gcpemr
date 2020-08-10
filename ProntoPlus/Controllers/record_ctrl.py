@@ -23,7 +23,7 @@ class RecordCtrl(_base.BaseCtrl):
         else:
             record = {
                 'id': uuid.uuid4(),
-                'id_user': uuid.uuid4(),
+                # 'id_user': uuid.uuid4(),
                 'id_patient': patient_id,
                 'tenant': tenant_id,
                 'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat']),

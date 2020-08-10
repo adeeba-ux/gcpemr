@@ -1,7 +1,7 @@
 import pytest
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
-import ProntoPlus.Models.db as db
+import ProntoPlus.db as db
 import ProntoPlus.Controllers as Ctrls
 
 from ProntoPlus.tests._cases import *
@@ -9,7 +9,7 @@ from ProntoPlus.tests._cases import *
 
 @pytest.fixture(scope='session')
 def session_mocker():
-    engine = sa.create_engine('sqlite:///database.db')
+    engine = sa.create_engine('sqlite://')
     db.metadata.create_all(engine)
 
     session = orm.sessionmaker(engine)()

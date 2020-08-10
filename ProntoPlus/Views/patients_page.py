@@ -96,12 +96,6 @@ class Ui_patients_page(object):
 
         self.verticalLayout.addLayout(self.container_search_top_h)
 
-        self.container_record_bot_grid = QGridLayout()
-        self.container_record_bot_grid.setObjectName(u"container_record_bot_grid")
-        self.container_record_bot_grid.setColumnStretch(0, 1)
-
-        self.verticalLayout.addLayout(self.container_record_bot_grid)
-
         self.patient_table = QTableWidget(patients_page)
         self.patient_table.setObjectName(u"patient_table")
         self.patient_table.setContextMenuPolicy(Qt.CustomContextMenu)

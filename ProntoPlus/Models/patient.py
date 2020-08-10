@@ -1,5 +1,5 @@
 import ProntoPlus.Models as Models
-import ProntoPlus.Models.db as _db
+import ProntoPlus.db as _db
 import marshmallow as mw
 import sqlalchemy as sa
 import sqlalchemy.orm as orm

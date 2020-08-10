@@ -2,7 +2,6 @@ import ProntoPlus.Models.base as _base
 import uuid
 import typing as t
 import sqlalchemy.orm as orm
-import sqlalchemy as sa
 import abc
 import marshmallow as mw
 

@@ -54,8 +54,8 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         elif action == delete_action:
             self._delete_patient()
 
-    def show_table(self, rows: t.Dict = []):
-        if not rows:
+    def show_table(self, rows: t.Dict = None):
+        if rows is None:
             rows = self._search_patients()
 
         self.patient_table.setRowCount(0)

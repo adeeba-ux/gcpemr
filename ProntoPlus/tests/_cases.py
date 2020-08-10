@@ -1,7 +1,10 @@
 import uuid
 import datetime as dt
 import ProntoPlus.Models as Models
-import ProntoPlus.config as cfg
+import configparser
+
+cfg = configparser.ConfigParser()
+cfg.read('config.ini')
 
 
 # TODO: implement Faker generators
@@ -134,14 +137,14 @@ class Cases:
 
         record_cases = [
             {
-                'id_user': test_user.id,
+                # 'id_user': test_user.id,
                 'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
                 'created_date': dt.datetime.now().strftime(cfg['CLIENT']['dateformat'])
             },
             {
-                'id_user': test_user.id,
+                # 'id_user': test_user.id,
                 'tenant': self.TENANT,
                 'id_patient': test_patient.id,
                 'text': 'Test Medical Record',
@@ -245,7 +248,8 @@ class BadCases(Cases):
 
         for i, case in enumerate(bad_record_cases['cases']):
             if i == 0:
-                case['id_user'] = 'User1'
+                # case['id_user'] = 'User1'
+                pass
             if i == 1:
                 case['id_patient'] = 'Patient1'
             else:

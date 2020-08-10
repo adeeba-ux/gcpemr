@@ -7,7 +7,7 @@ import uuid
 import datetime as dt
 import passlib.hash as plib
 
-import ProntoPlus.Models.db as _db
+import ProntoPlus.db as _db
 import ProntoPlus.Models.base as _base
 
 

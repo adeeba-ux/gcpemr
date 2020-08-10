@@ -1,16 +1,18 @@
 from .patient_ctrl import PatientCtrl
 from .record_ctrl import RecordCtrl
 from .user_ctrl import UserCtrl
-import ProntoPlus.Models.db as _db
+import ProntoPlus.db as _db
 
+engine = _db.make_engine()
+session = _db.make_session(engine)
 
 def init_patient_ctrl() -> PatientCtrl:
-    return PatientCtrl(_db.session)
+    return PatientCtrl(session)
 
 
 def init_record_ctrl() -> RecordCtrl:
-    return RecordCtrl(_db.session)
+    return RecordCtrl(session)
 
 
 def init_user_ctrl() -> UserCtrl:
-    return UserCtrl(_db.session)
+    return UserCtrl(session)
