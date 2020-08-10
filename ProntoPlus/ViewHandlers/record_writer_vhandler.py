@@ -9,6 +9,7 @@ import datetime as dt
 import uuid
 import os
 import configparser
+import sqlalchemy.orm as orm
 
 cfg = configparser.ConfigParser()
 cfg.read('config.ini')
@@ -16,10 +17,11 @@ cfg.read('config.ini')
 
 class RecordWriterVHandler(Views.record_writer_page.MainWindow, qtW.QMainWindow):
 
-    def __init__(self, patient_data: t.Dict = None):
+    def __init__(self, session: orm.Session, patient_data: t.Dict = None):
         super().__init__()
-        self.patient_ctrl = Ctrls.init_patient_ctrl()
-        self.record_ctrl = Ctrls.init_record_ctrl()
+        self._session = session
+        self.patient_ctrl = Ctrls.PatientCtrl(self._session)
+        self.record_ctrl = Ctrls.RecordCtrl(self._session)
 
         if patient_data is not None:
             self.patient_data = patient_data

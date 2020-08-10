@@ -15,15 +15,15 @@ class PatientsPageVHandler(Views.patients_page.Ui_patients_page, qtW.QWidget):
         self.setupUi(self)
 
         self.parent = parent
-        self.patient_ctrl = Ctrls.init_patient_ctrl()
-        self.record_ctrl = Ctrls.init_record_ctrl()
+        self.patient_ctrl = Ctrls.PatientCtrl(self.parent.session)
+        self.record_ctrl = Ctrls.RecordCtrl(self.parent.session)
         self.presentation_fields = self.patient_ctrl.presentation()
         self.cls = self.patient_ctrl.CTRLCLASS
         self._current_patients_cache = []
 
         self.show_table()
         self.setup_buttons_and_menu()
-        self.writer = vHandler.RecordWriterVHandler()
+        self.writer = vHandler.RecordWriterVHandler(session=self.parent.session)
 
     def setup_buttons_and_menu(self):
         self.patient_search_btn.clicked.connect(self._search)

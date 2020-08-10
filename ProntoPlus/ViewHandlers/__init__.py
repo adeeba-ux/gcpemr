@@ -8,10 +8,10 @@ import sys
 import uuid
 
 
-def start(cfg):
+def start(cfg, session):
     app = qtW.QApplication(sys.argv)
     app.setStyle('Breeze')
-    window = main_vhandler.MainVHandler(cfg)
+    window = main_vhandler.MainVHandler(cfg, session)
     window.TENANT = uuid.UUID(cfg['CLIENT']['tenant'])
     window.show()
     sys.exit(app.exec_())

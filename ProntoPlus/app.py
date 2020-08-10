@@ -10,10 +10,14 @@ sys.path.insert(0, parentdir)
 from ProntoPlus.ViewHandlers import start
 import ProntoPlus.db as db
 import configparser
+import sqlalchemy as sa
+import sqlalchemy.orm as orm
 
 cfg = configparser.ConfigParser()
 cfg.read('config.ini')
 
 if __name__ == '__main__':
-    db.metadata.create_all(db.make_engine())
-    start(cfg)
+    engine = sa.create_engine(cfg['DB']['connstring'])
+    session = orm.sessionmaker(engine)()
+    db.metadata.create_all(engine)
+    start(cfg, session)

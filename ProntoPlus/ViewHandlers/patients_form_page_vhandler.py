@@ -13,7 +13,7 @@ class PatientFormPageVHandler(views.patients_form_page.Ui_patients_form_page, qt
     def __init__(self, parent: qtW.QMainWindow = None, patient: Ctrls.PatientCtrl.CTRLCLASS = None):
         super().__init__()
         self.parent = parent
-        self.controller = Ctrls.init_patient_ctrl()
+        self.controller = Ctrls.PatientCtrl(self.parent.session)
         if patient is None:
             new_patient_data = {
                 'id': uuid.uuid4(),
@@ -25,7 +25,6 @@ class PatientFormPageVHandler(views.patients_form_page.Ui_patients_form_page, qt
             self.patient = self.controller.load(new_patient_data)
         else:
             self.patient = patient
-        self.patient_ctrl = Ctrls.init_patient_ctrl()
         self.setupUi(self)
 
         self.setup_buttons()

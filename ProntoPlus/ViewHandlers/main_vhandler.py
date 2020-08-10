@@ -7,13 +7,14 @@ import ProntoPlus.ViewHandlers as vHandler
 
 class MainVHandler(Views.main.Ui_MainWindow, qtW.QMainWindow):
 
-    def __init__(self, config):
+    def __init__(self, config, session):
         super().__init__()
         self.setupUi(self)
         self.setup_buttons()
         self.main_widget.parent().layout()
         self._current_widget = self.main_widget
         self.cfg = config
+        self.session = session
         self.open_patients_page()
 
     def setup_buttons(self):

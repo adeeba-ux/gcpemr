@@ -1,17 +1,21 @@
 import pytest
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
-import ProntoPlus.db as db
 import ProntoPlus.Controllers as Ctrls
+import ProntoPlus.db as _db
 
 from ProntoPlus.tests._cases import *
 
 
 @pytest.fixture(scope='session')
-def session_mocker():
-    engine = sa.create_engine('sqlite://')
-    db.metadata.create_all(engine)
+def engine_mocker():
+    return sa.create_engine('sqlite://')
 
+
+@pytest.fixture(scope='session')
+def session_mocker(engine_mocker):
+    engine = engine_mocker
+    _db.metadata.create_all(engine)
     session = orm.sessionmaker(engine)()
 
     return session
