@@ -11,7 +11,7 @@ Toy project for an app that maintains a registry of medics/patients and their me
 
 First, clone this repository with 
 ```shell
-git clone https://github.com/altctrlDev/ProntoPlus
+git clone https://github.com/akelopes/ProntoPlus
 ```
 
 Then, install the requirements with:
